@@ -1,18 +1,19 @@
-import 'package:clothes_app/users/authentication/signup_screen.dart';
+import 'package:clothes_app/users/authentication/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:developer' as devtools show log;
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   var _formKey = GlobalKey<FormState>();
   var isObsecure = true.obs;
+  TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
@@ -31,18 +32,20 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               child: Column(
                 children: [
-                  // Login Screen Header
+                  // Signup Screen Header
                   Container(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.4,
-                    child: Image.asset("images/login.jpg", fit: BoxFit.cover),
+                    child:
+                        Image.asset("images/register.jpg", fit: BoxFit.cover),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
-                  // Login Screen Sign in Form
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  // Signup Screen Signup in Form
                   Padding(
                     padding: const EdgeInsets.all(15),
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 0.45,
                       decoration: const BoxDecoration(
                         color: Colors.white24,
                         boxShadow: [
@@ -65,6 +68,59 @@ class _LoginScreenState extends State<LoginScreen> {
                               key: _formKey,
                               child: Column(
                                 children: [
+                                  TextFormField(
+                                    controller: _nameController,
+                                    decoration: const InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.person,
+                                        color: Colors.black,
+                                      ),
+                                      hintText: "Please Enter Your Name",
+                                      // labelText: "Please Enter Email",
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                        borderSide:
+                                            BorderSide(color: Colors.white60),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                        borderSide:
+                                            BorderSide(color: Colors.white60),
+                                      ),
+                                      disabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                        borderSide:
+                                            BorderSide(color: Colors.white60),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                        borderSide:
+                                            BorderSide(color: Colors.white60),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 6),
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                    ),
+                                    validator: (value) {
+                                      var checkNull = value ?? "";
+                                      if (checkNull.isEmpty) {
+                                        return "Name Can't be Empty";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
                                   TextFormField(
                                     controller: _emailController,
                                     decoration: const InputDecoration(
@@ -209,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 20, vertical: 10),
                                         child: Text(
-                                          "LOGIN",
+                                          "SIGNUP",
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20,
@@ -227,13 +283,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("Don't have an account ?  "),
+                                const Text("Already have an account ?  "),
                                 InkWell(
                                   onTap: () {
-                                    Get.to(() => const SignupScreen());
+                                    Get.to(() => const LoginScreen());
                                   },
                                   child: const Text(
-                                    "SIGNUP",
+                                    "LOGIN",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold),
@@ -241,30 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-                            const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Text(
-                                "OR",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text("Are you an Admin ?  "),
-                                InkWell(
-                                  onTap: () {},
-                                  child: const Text(
-                                    "CLICK HERE",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
+
                             // Email Field
                           ],
                         ),

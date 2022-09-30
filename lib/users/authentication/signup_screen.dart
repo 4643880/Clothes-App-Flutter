@@ -1,7 +1,11 @@
+import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/authentication/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:developer' as devtools show log;
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -13,9 +17,47 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   var _formKey = GlobalKey<FormState>();
   var isObsecure = true.obs;
+
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
+  validateUserEmail() async {
+    try {
+      var url = API.validateEmail;
+      var response = await http.post(Uri.parse(url), body: {
+        'user_email': _emailController.text,
+      });
+      // Successful Connection
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBody = convert.jsonDecode(jsonString);
+        if (decodedResponseBody['emailFound'] == true) {
+          Fluttertoast.showToast(
+              msg:
+                  "Email already exists. Please Try Again with different Email Address",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          // Register and Save New User to Database
+          registerAndUserRecord();
+        }
+      }
+      // var jsonString = response.body;
+      // var decodedJson = convert.jsonDecode(jsonString) as Map<String, dynamic>;
+      // var result = LoginResponse.fromJson(decodedJson);
+      // "Decoded".log();
+
+    } catch (e) {}
+  }
+
+  registerAndUserRecord() async {
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -255,6 +297,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     child: InkWell(
                                       onTap: () {
                                         if (_formKey.currentState!.validate()) {
+                                          // Validate the Email
                                           devtools.log("form passed");
                                         } else {
                                           devtools.log("form failed");

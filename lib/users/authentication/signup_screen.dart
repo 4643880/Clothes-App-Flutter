@@ -32,17 +32,13 @@ class _SignupScreenState extends State<SignupScreen> {
       // Successful Connection
       if (response.statusCode == 200) {
         var jsonString = response.body;
-        var decodedResponseBody = convert.jsonDecode(jsonString);
-        if (decodedResponseBody['emailFound'] == true) {
+        var decodedResponseBodyForValidation =
+            convert.jsonDecode(jsonString) as Map<String, dynamic>;
+        devtools.log(decodedResponseBodyForValidation.toString());
+        if (decodedResponseBodyForValidation['emailFound'] == true) {
           Fluttertoast.showToast(
             msg:
                 "Email already exists. Please Try Again with different Email Address.",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0,
           );
         } else {
           // Register and Save New User to Database
@@ -52,14 +48,7 @@ class _SignupScreenState extends State<SignupScreen> {
     } catch (e) {
       devtools.log(e.toString());
       Fluttertoast.showToast(
-        msg:
-        e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
+        msg: e.toString(),
       );
     }
   }
@@ -80,42 +69,29 @@ class _SignupScreenState extends State<SignupScreen> {
       );
       if (response.statusCode == 200) {
         var jsonString = response.body;
-        var decodedResponseBody = convert.jsonDecode(jsonString);
-        if (decodedResponseBody['success'] == true) {
+        var decodedResponseBodyForSignup =
+            convert.jsonDecode(jsonString) as Map<String, dynamic>;
+        devtools.log(decodedResponseBodyForSignup.toString());
+        if (decodedResponseBodyForSignup['success'] == true) {
+          setState(() {
+            [nameController, emailController, passwordController]
+                .forEach((element) {
+              element.clear();
+            });
+          });
           Fluttertoast.showToast(
-            msg:
-            "Congratulations, You have signed up successfully.",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0,
+            msg: "Congratulations, You have signed up successfully.",
           );
-        }else{
+        } else {
           Fluttertoast.showToast(
-            msg:
-            "Something went wrong. Please try again later.",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0,
+            msg: "Something went wrong. Please try again later.",
           );
         }
       }
     } catch (e) {
       devtools.log(e.toString());
       Fluttertoast.showToast(
-        msg:
-        e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
+        msg: e.toString(),
       );
     }
   }
@@ -359,6 +335,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                       onTap: () {
                                         if (_formKey.currentState!.validate()) {
                                           // Validate the Email
+                                          validateUserEmail();
                                           devtools.log("form passed");
                                         } else {
                                           devtools.log("form failed");

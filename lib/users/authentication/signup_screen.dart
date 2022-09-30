@@ -35,20 +35,33 @@ class _SignupScreenState extends State<SignupScreen> {
         var decodedResponseBody = convert.jsonDecode(jsonString);
         if (decodedResponseBody['emailFound'] == true) {
           Fluttertoast.showToast(
-              msg:
-                  "Email already exists. Please Try Again with different Email Address",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
+            msg:
+                "Email already exists. Please Try Again with different Email Address.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
         } else {
           // Register and Save New User to Database
           registerAndUserRecord();
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      devtools.log(e.toString());
+      Fluttertoast.showToast(
+        msg:
+        e.toString(),
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
   }
 
   registerAndUserRecord() async {
@@ -65,7 +78,46 @@ class _SignupScreenState extends State<SignupScreen> {
         Uri.parse(url),
         body: userModel.toJson(),
       );
-    } catch (e) {}
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBody = convert.jsonDecode(jsonString);
+        if (decodedResponseBody['success'] == true) {
+          Fluttertoast.showToast(
+            msg:
+            "Congratulations, You have signed up successfully.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }else{
+          Fluttertoast.showToast(
+            msg:
+            "Something went wrong. Please try again later.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+      }
+    } catch (e) {
+      devtools.log(e.toString());
+      Fluttertoast.showToast(
+        msg:
+        e.toString(),
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
   }
 
   @override

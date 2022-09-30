@@ -1,5 +1,6 @@
 import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/authentication/login_screen.dart';
+import 'package:clothes_app/users/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:developer' as devtools show log;
@@ -18,15 +19,15 @@ class _SignupScreenState extends State<SignupScreen> {
   var _formKey = GlobalKey<FormState>();
   var isObsecure = true.obs;
 
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   validateUserEmail() async {
     try {
       var url = API.validateEmail;
       var response = await http.post(Uri.parse(url), body: {
-        'user_email': _emailController.text,
+        'user_email': emailController.text,
       });
       // Successful Connection
       if (response.statusCode == 200) {
@@ -47,16 +48,24 @@ class _SignupScreenState extends State<SignupScreen> {
           registerAndUserRecord();
         }
       }
-      // var jsonString = response.body;
-      // var decodedJson = convert.jsonDecode(jsonString) as Map<String, dynamic>;
-      // var result = LoginResponse.fromJson(decodedJson);
-      // "Decoded".log();
-
     } catch (e) {}
   }
 
   registerAndUserRecord() async {
+    User userModel = User(
+      user_id: 1,
+      user_name: nameController.text.trim(),
+      user_email: emailController.text.trim(),
+      user_password: passwordController.text.trim(),
+    );
 
+    try {
+      var url = API.signup;
+      var response = await http.post(
+        Uri.parse(url),
+        body: userModel.toJson(),
+      );
+    } catch (e) {}
   }
 
   @override
@@ -111,7 +120,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               child: Column(
                                 children: [
                                   TextFormField(
-                                    controller: _nameController,
+                                    controller: nameController,
                                     decoration: const InputDecoration(
                                       prefixIcon: Icon(
                                         Icons.person,
@@ -164,7 +173,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     height: 15,
                                   ),
                                   TextFormField(
-                                    controller: _emailController,
+                                    controller: emailController,
                                     decoration: const InputDecoration(
                                       prefixIcon: Icon(
                                         Icons.email,
@@ -219,7 +228,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   // Password Field
                                   Obx(() {
                                     return TextFormField(
-                                      controller: _passwordController,
+                                      controller: passwordController,
                                       obscureText: isObsecure.value,
                                       decoration: InputDecoration(
                                         prefixIcon: const Icon(

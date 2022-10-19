@@ -11,6 +11,20 @@ class User {
     this.user_password,
   });
 
+  // User.fromJson(Map<String, dynamic> json) {
+  //   user_id = json["user_id"] as int;
+  //   user_name = json["user_name"] as String;
+  //   user_email = json["user_email"] as String;
+  //   user_password = json["user_password"] as String;
+  // }
+
+  factory User.fromJson(Map<String, dynamic> json) => User(
+        user_id: int.parse(json["user_id"]),
+        user_name: json["user_name"] as String,
+        user_email: json["user_email"] as String,
+        user_password: json["user_password"] as String,
+      );
+
   Map<String, dynamic> toJson() => {
         'user_id': user_id.toString(),
         'user_name': user_name.toString(),

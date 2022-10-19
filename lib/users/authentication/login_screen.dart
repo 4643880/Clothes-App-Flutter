@@ -1,7 +1,14 @@
+import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/authentication/signup_screen.dart';
+import 'package:clothes_app/users/fragments/dashboard_of_fragments.dart';
+import 'package:clothes_app/users/models/user_model.dart';
+import 'package:clothes_app/users/userPreferences/user_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'dart:developer' as devtools show log;
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -13,8 +20,55 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   var _formKey = GlobalKey<FormState>();
   var isObsecure = true.obs;
+
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
+  loginUserNow() async {
+    try{
+      var url = API.login;
+      var response = await http.post(Uri.parse(url), body: {
+        'user_email': _emailController.text.trim(),
+        'user_password': _passwordController.text.trim()
+      });
+
+      // Successful Connection
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBodyForLogin =
+        convert.jsonDecode(jsonString) as Map<String, dynamic>;
+        devtools.log(decodedResponseBodyForLogin.toString());
+        if (decodedResponseBodyForLogin['success'] == true) {
+          var decodedData =
+          decodedResponseBodyForLogin['userData'] as Map<String, dynamic>;
+
+          User userInfo = User.fromJson(decodedData);
+
+          // Save User Info to Local Storage Using SharedPreferences
+          final a = await RememberUserPrefs.saveAndRememberUser(userInfo);
+
+          // Navigating User to Dashboard
+          Get.to(const DashboardOfFragments());
+
+
+          Fluttertoast.showToast(
+            msg: "Logged in Successfully.",
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg:
+            "Incorrect Credentials, \n Please Enter Correct Login Credentials.",
+          );
+        }
+      }
+    }catch (e){
+      print(e.toString());
+      Fluttertoast.showToast(
+        msg:
+        e.toString(),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +91,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: MediaQuery.of(context).size.height * 0.4,
                     child: Image.asset("images/login.jpg", fit: BoxFit.cover),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
                   // Login Screen Sign in Form
                   Padding(
                     padding: const EdgeInsets.all(15),
@@ -200,6 +256,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       onTap: () {
                                         if (_formKey.currentState!.validate()) {
                                           devtools.log("form passed");
+                                          loginUserNow();
                                         } else {
                                           devtools.log("form failed");
                                         }
@@ -255,7 +312,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: [
                                 const Text("Are you an Admin ?  "),
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+
+                                  },
                                   child: const Text(
                                     "CLICK HERE",
                                     style: TextStyle(

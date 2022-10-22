@@ -1,4 +1,6 @@
 import 'package:clothes_app/users/authentication/login_screen.dart';
+import 'package:clothes_app/users/fragments/dashboard_of_fragments.dart';
+import 'package:clothes_app/users/userPreferences/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,7 +23,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.orange,
       ),
       home: FutureBuilder(
+        future: UserPrefs.readUserInfo(),
         builder: (context, snapshot) {
+          if(snapshot.hasData){
+            return DashboardOfFragments();
+          }
           return const LoginScreen();
         },
       ),

@@ -1,6 +1,6 @@
 class API {
   // Get IP from terminal ipconfig
-  static const hostConnect = "http://192.168.250.180/api_clothes_store/";
+  static const hostConnect = "http://192.168.195.180/api_clothes_store/";
   static const hostConnectUser = "$hostConnect/user/";
 
   // Email Validattion

@@ -15,7 +15,7 @@ class DashboardOfFragments extends StatelessWidget {
     const HomeFragmentScreen(),
     const FavoriteFragmentScreen(),
     const OrderFragmentScreen(),
-    const ProfileFragmentScreen()
+    ProfileFragmentScreen()
   ];
 
   List navigationButtonsProperties = [
@@ -53,7 +53,7 @@ class DashboardOfFragments extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           backgroundColor: Colors.black,
-          appBar: AppBar(title: const Text("Dashboard Fragment screen")),
+          // appBar: AppBar(title: const Text("Dashboard Fragment screen")),
           body: SafeArea(
             child: Obx(
               () {

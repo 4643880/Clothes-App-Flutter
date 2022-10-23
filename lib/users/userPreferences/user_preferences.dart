@@ -31,7 +31,15 @@ class UserPrefs{
       currentUser = User.fromJson(userDecodedData);
     }
     return currentUser;
+  }
 
+
+
+  // Delete User Info
+  static Future<void> removeUserInfo() async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('currentUserCredentials');
   }
 
 }

@@ -1,4 +1,6 @@
+import 'package:clothes_app/users/authentication/login_screen.dart';
 import 'package:clothes_app/users/userPreferences/current_user.dart';
+import 'package:clothes_app/users/userPreferences/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,6 +34,42 @@ class ProfileFragmentScreen extends StatelessWidget {
     );
   }
 
+  signOutUser() async {
+    var responseOfDialog = await Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.grey,
+        title: const Text(
+          "Log Out",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        content: const Text("Are you sure? \nYou want to sign out from app. "),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text(
+                "No",
+                style: TextStyle(color: Colors.black),
+              )),
+          TextButton(
+              onPressed: () {
+                Get.back(result: "loggedOut");
+              },
+              child: const Text(
+                "Yes",
+                style: TextStyle(color: Colors.black),
+              )),
+        ],
+      ),
+    );
+
+    if (responseOfDialog == "loggedOut") {
+      // Delete User Info From Shared Prefs
+      UserPrefs.removeUserInfo().then((value) => Get.off(LoginScreen()));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -40,7 +78,7 @@ class ProfileFragmentScreen extends StatelessWidget {
         children: [
           Center(
             child: Image.asset(
-              "images/woman.png",
+              "images/man.png",
               width: 240,
             ),
           ),
@@ -64,7 +102,9 @@ class ProfileFragmentScreen extends StatelessWidget {
               color: Colors.redAccent,
               borderRadius: BorderRadius.circular(8),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  signOutUser();
+                },
                 borderRadius: BorderRadius.circular(32), //32
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),

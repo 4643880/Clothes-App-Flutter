@@ -28,10 +28,10 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
   loginAdminNow() async {
     try {
-      var url = API.login;
+      var url = API.loginAdmin;
       var response = await http.post(Uri.parse(url), body: {
-        'user_email': _emailController.text.trim(),
-        'user_password': _passwordController.text.trim()
+        'admin_email': _emailController.text.trim(),
+        'admin_password': _passwordController.text.trim()
       });
 
       // Successful Connection
@@ -42,7 +42,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
         devtools.log(decodedResponseBodyForLogin.toString());
         if (decodedResponseBodyForLogin['success'] == true) {
           var decodedData =
-              decodedResponseBodyForLogin['userData'] as Map<String, dynamic>;
+              decodedResponseBodyForLogin['adminData'] as Map<String, dynamic>;
 
           // Navigating User to Dashboard
           Get.to(const AdminUploadItemsScreen());

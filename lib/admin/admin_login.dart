@@ -1,5 +1,6 @@
-import 'package:clothes_app/admin/admin_login.dart';
+import 'package:clothes_app/admin/admin_upload_items.dart';
 import 'package:clothes_app/api_connection/api_connection.dart';
+import 'package:clothes_app/users/authentication/login_screen.dart';
 import 'package:clothes_app/users/authentication/signup_screen.dart';
 import 'package:clothes_app/users/fragments/dashboard_of_fragments.dart';
 import 'package:clothes_app/users/models/user_model.dart';
@@ -11,22 +12,22 @@ import 'dart:developer' as devtools show log;
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class AdminLoginScreen extends StatefulWidget {
+  const AdminLoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<AdminLoginScreen> createState() => _AdminLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _AdminLoginScreenState extends State<AdminLoginScreen> {
   var _formKey = GlobalKey<FormState>();
   var isObsecure = true.obs;
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
-  loginUserNow() async {
-    try{
+  loginAdminNow() async {
+    try {
       var url = API.login;
       var response = await http.post(Uri.parse(url), body: {
         'user_email': _emailController.text.trim(),
@@ -37,20 +38,14 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         var jsonString = response.body;
         var decodedResponseBodyForLogin =
-        convert.jsonDecode(jsonString) as Map<String, dynamic>;
+            convert.jsonDecode(jsonString) as Map<String, dynamic>;
         devtools.log(decodedResponseBodyForLogin.toString());
         if (decodedResponseBodyForLogin['success'] == true) {
           var decodedData =
-          decodedResponseBodyForLogin['userData'] as Map<String, dynamic>;
-
-          User userInfo = User.fromJson(decodedData);
-
-          // Save User Info to Local Storage Using SharedPreferences
-          final a = await UserPrefs.saveAndRememberUserInfo(userInfo);
+              decodedResponseBodyForLogin['userData'] as Map<String, dynamic>;
 
           // Navigating User to Dashboard
-          Get.to(DashboardOfFragments());
-
+          Get.to(const AdminUploadItemsScreen());
 
           Fluttertoast.showToast(
             msg: "Logged in Successfully.",
@@ -58,15 +53,14 @@ class _LoginScreenState extends State<LoginScreen> {
         } else {
           Fluttertoast.showToast(
             msg:
-            "Incorrect Credentials, \n Please Enter Correct Login Credentials.",
+                "Incorrect Credentials, \n Please Enter Correct Login Credentials.",
           );
         }
       }
-    }catch (e){
+    } catch (e) {
       print(e.toString());
       Fluttertoast.showToast(
-        msg:
-        e.toString(),
+        msg: e.toString(),
       );
     }
   }
@@ -90,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.4,
-                    child: Image.asset("images/login.jpg", fit: BoxFit.cover),
+                    child: Image.asset("images/admin.jpg", fit: BoxFit.cover),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.05,
@@ -257,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       onTap: () {
                                         if (_formKey.currentState!.validate()) {
                                           devtools.log("form passed");
-                                          loginUserNow();
+                                          loginAdminNow();
                                         } else {
                                           devtools.log("form failed");
                                         }
@@ -280,18 +274,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             const SizedBox(
-                              height: 15,
+                              height: 25,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("Don't have an account ?  "),
+                                const Text("I am not an admin  "),
                                 InkWell(
                                   onTap: () {
-                                    Get.to(() => const SignupScreen());
+                                    Get.to(() => const LoginScreen());
                                   },
                                   child: const Text(
-                                    "SIGNUP",
+                                    "Click Here",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold),
@@ -299,32 +293,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-                            const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Text(
-                                "OR",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text("Are you an Admin ?  "),
-                                InkWell(
-                                  onTap: () {
-                                    Get.to(const AdminLoginScreen());
-                                  },
-                                  child: const Text(
-                                    "CLICK HERE",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ),
+
                             // Email Field
                           ],
                         ),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,30 +12,39 @@ class AdminUploadItemsScreen extends StatefulWidget {
 }
 
 class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
-
   // Object of Image Picker
   final ImagePicker _picker = ImagePicker();
-  // Capture a photo With Camera
-  late final XFile? capturedImgWithCamera;
 
-  // Pick an image From Gallery
-  late final XFile? pickedImgFromGallery;
+  // Will Assign Image to this variable
+  XFile? pickedImageXFileVar;
 
+  //===========================================================
+  //        Default Screen Methods Starts Here
+  //===========================================================
 
   captureImageWithPhoneCamera() async {
-    capturedImgWithCamera = await _picker.pickImage(
+    final pickedImageXFileWithCamera = await _picker.pickImage(
       source: ImageSource.camera,
     );
+
     Get.back();
+
+    setState(() {
+      pickedImageXFileVar = pickedImageXFileWithCamera;
+    });
   }
+
   pickImageFromGallery() async {
-    pickedImgFromGallery = await _picker.pickImage(
+    final pickedImageXFileFromGallery = await _picker.pickImage(
       source: ImageSource.gallery,
     );
     Get.back();
+
+    setState(() {
+      pickedImageXFileVar = pickedImageXFileFromGallery;
+    });
   }
 
-  // await _picker.pickImage(source: ImageSource.gallery);
   showDialogBoxForPickingImage() {
     return showDialog(
       context: context,
@@ -54,7 +65,6 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                 "Capture With Phone Camera",
                 style: TextStyle(color: Colors.grey),
               ),
-
             ),
             SimpleDialogOption(
               onPressed: () {
@@ -79,6 +89,10 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
       },
     );
   }
+
+  //===========================================================
+  //        Default Screen Methods Ends Here
+  //===========================================================
 
   Widget defaultScreen() {
     return Scaffold(
@@ -133,8 +147,31 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
     );
   }
 
+  Widget uploadItemFormScreen() {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: ListView(
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height * 0.4,
+            width: MediaQuery.of(context).size.width * 0.8,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: FileImage(
+                    File(pickedImageXFileVar!.path),
+                  ),
+                  fit: BoxFit.cover),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return defaultScreen();
+    return (pickedImageXFileVar == null)
+        ? defaultScreen()
+        : uploadItemFormScreen();
   }
 }

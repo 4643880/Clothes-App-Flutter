@@ -55,6 +55,12 @@ class _LoginScreenState extends State<LoginScreen> {
           Fluttertoast.showToast(
             msg: "Logged in Successfully.",
           );
+          setState(() {
+            [_emailController, _passwordController]
+                .forEach((element) {
+              element.clear();
+            });
+          });
         } else {
           Fluttertoast.showToast(
             msg:

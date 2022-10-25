@@ -46,6 +46,12 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
           Fluttertoast.showToast(
             msg: "Logged in Successfully.",
           );
+          setState(() {
+            [_emailController, _passwordController]
+                .forEach((element) {
+              element.clear();
+            });
+          });
         } else {
           Fluttertoast.showToast(
             msg:

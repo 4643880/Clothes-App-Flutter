@@ -1,10 +1,6 @@
 import 'package:clothes_app/admin/admin_upload_items.dart';
 import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/authentication/login_screen.dart';
-import 'package:clothes_app/users/authentication/signup_screen.dart';
-import 'package:clothes_app/users/fragments/dashboard_of_fragments.dart';
-import 'package:clothes_app/users/models/user_model.dart';
-import 'package:clothes_app/users/userPreferences/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';

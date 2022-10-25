@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AdminUploadItemsScreen extends StatefulWidget {
   const AdminUploadItemsScreen({Key? key}) : super(key: key);
@@ -9,6 +10,30 @@ class AdminUploadItemsScreen extends StatefulWidget {
 }
 
 class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
+
+  // Object of Image Picker
+  final ImagePicker _picker = ImagePicker();
+  // Capture a photo With Camera
+  late final XFile? capturedImgWithCamera;
+
+  // Pick an image From Gallery
+  late final XFile? pickedImgFromGallery;
+
+
+  captureImageWithPhoneCamera() async {
+    capturedImgWithCamera = await _picker.pickImage(
+      source: ImageSource.camera,
+    );
+    Get.back();
+  }
+  pickImageFromGallery() async {
+    pickedImgFromGallery = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
+    Get.back();
+  }
+
+  // await _picker.pickImage(source: ImageSource.gallery);
   showDialogBoxForPickingImage() {
     return showDialog(
       context: context,
@@ -17,22 +42,30 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
           backgroundColor: Colors.black87,
           title: const Text(
             "Item Image",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepPurple),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.deepPurple),
           ),
           children: [
             SimpleDialogOption(
+              onPressed: () {
+                captureImageWithPhoneCamera();
+              },
               child: const Text(
                 "Capture With Phone Camera",
                 style: TextStyle(color: Colors.grey),
               ),
-              onPressed: () {},
-            ),SimpleDialogOption(
+
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                pickImageFromGallery();
+              },
               child: const Text(
                 "Pick Image From Gallery",
                 style: TextStyle(color: Colors.grey),
               ),
-              onPressed: () {},
-            ),SimpleDialogOption(
+            ),
+            SimpleDialogOption(
               child: const Text(
                 "Cancel",
                 style: TextStyle(color: Colors.red),

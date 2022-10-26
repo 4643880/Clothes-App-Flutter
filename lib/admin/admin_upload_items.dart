@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:clothes_app/admin/admin_login.dart';
+import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:developer' as devtools show log;
@@ -147,6 +149,75 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
 
       devtools.log(imageLink);
       devtools.log(deleteHash);
+      saveItemsInfoToDatabase();
+    }
+  }
+
+  saveItemsInfoToDatabase() async {
+    List<String> tagsList = tagsController.text.split(',');
+    List<String> sizesList = sizesController.text.split(',');
+    List<String> colorsList = colorsController.text.split(',');
+    try {
+      var url = API.uploadItems;
+      var response = await http.post(
+        Uri.parse(url),
+        body: {
+          'item_id': nameController.text.trim().toString(),
+          'item_name': nameController.text.trim().toString(),
+          'item_rating': ratingController.text.trim().toString(),
+          'item_tags': tagsList.toString(),
+          'item_price': priceController.text.trim().toString(),
+          'item_sizes': sizesList.toString(),
+          'item_colors': colorsList.toString(),
+          'item_desc': descriptionController.text.trim().toString(),
+          'item_image': imageLink,
+        },
+      );
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBodyForSignup =
+            jsonDecode(jsonString) as Map<String, dynamic>;
+        devtools.log(decodedResponseBodyForSignup.toString());
+        if (decodedResponseBodyForSignup['success'] == true) {
+          setState(() {
+            [
+              nameController,
+              ratingController,
+              tagsController,
+              priceController,
+              sizesController,
+              colorsController,
+              descriptionController
+            ].forEach((element) {
+              element.clear();
+            });
+          });
+
+          Fluttertoast.showToast(
+            msg: "Congratulations, New Item Uploaded successfully.",
+          );
+
+          setState(() {
+            pickedImageXFileVar = null;
+          });
+
+          Get.to(const AdminUploadItemsScreen());
+        } else {
+          Fluttertoast.showToast(
+            msg:
+                "Something went wrong.\nItem Not Uploaded. Please try again later.",
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "Status is not 200.",
+        );
+      }
+    } catch (e) {
+      devtools.log(e.toString());
+      Fluttertoast.showToast(
+        msg: e.toString(),
+      );
     }
   }
 
@@ -221,13 +292,26 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
         title: const Text("Upload New Item"),
         leading: IconButton(
           onPressed: () {
-            Get.to(const AdminLoginScreen());
+            setState(() {
+              pickedImageXFileVar = null;
+            });
+            Get.to(const AdminUploadItemsScreen());
           },
           icon: const Icon(Icons.clear),
         ),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                devtools.log("form passed");
+                Fluttertoast.showToast(
+                  msg: "Uploading Now...",
+                );
+                uploadItemImage();
+              } else {
+                devtools.log("form failed");
+              }
+            },
             child: const Text(
               "Done",
               style: TextStyle(
@@ -283,6 +367,7 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                         children: [
                           // Item Name
                           TextFormField(
+                            enableSuggestions: true,
                             controller: nameController,
                             decoration: const InputDecoration(
                               prefixIcon: Icon(
@@ -333,6 +418,7 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                           ),
                           // Item Rating
                           TextFormField(
+                            enableSuggestions: true,
                             controller: ratingController,
                             decoration: const InputDecoration(
                               prefixIcon: Icon(
@@ -383,6 +469,7 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                           ),
                           // Item Tags
                           TextFormField(
+                            enableSuggestions: true,
                             controller: tagsController,
                             decoration: const InputDecoration(
                               prefixIcon: Icon(
@@ -433,6 +520,7 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                           ),
                           // Item Price
                           TextFormField(
+                            enableSuggestions: true,
                             controller: priceController,
                             decoration: const InputDecoration(
                               prefixIcon: Icon(
@@ -483,6 +571,7 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                           ),
                           // Item Sizes
                           TextFormField(
+                            enableSuggestions: true,
                             controller: sizesController,
                             decoration: const InputDecoration(
                               prefixIcon: Icon(
@@ -533,6 +622,7 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                           ),
                           // Item Colors
                           TextFormField(
+                            enableSuggestions: true,
                             controller: colorsController,
                             decoration: const InputDecoration(
                               prefixIcon: Icon(
@@ -583,6 +673,7 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                           ),
                           // Item Description
                           TextFormField(
+                            enableSuggestions: true,
                             controller: descriptionController,
                             decoration: const InputDecoration(
                               prefixIcon: Icon(
@@ -639,10 +730,12 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                               onTap: () {
                                 if (_formKey.currentState!.validate()) {
                                   devtools.log("form passed");
+                                  Fluttertoast.showToast(
+                                    msg: "Uploading Now...",
+                                  );
                                   uploadItemImage();
                                 } else {
                                   devtools.log("form failed");
-                                  uploadItemImage();
                                 }
                               },
                               borderRadius: BorderRadius.circular(10),

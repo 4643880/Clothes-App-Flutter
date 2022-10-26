@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:developer' as devtools show log;
+import 'package:http/http.dart' as http;
+
 
 class AdminUploadItemsScreen extends StatefulWidget {
   const AdminUploadItemsScreen({Key? key}) : super(key: key);
@@ -104,6 +106,42 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
 
   //===========================================================
   //        Default Screen Methods Ends Here
+  //===========================================================
+
+  //===========================================================
+  //        Upload Item Form Screen Methods Starts Here
+  //===========================================================
+  // Documention of Imgur
+  // https://apidocs.imgur.com/#2078c7e0-c2b8-4bc8-a646-6e544b087d0f
+
+  uploadItemImage() async {
+    var requestImgurApi = http.MultipartRequest(
+      "POST",
+      Uri.parse("https://api.imgur.com/3/image"),
+    );
+
+    // Image Name should be unique that's why using date time
+    String imageName = DateTime.now().millisecondsSinceEpoch.toString();
+    requestImgurApi.fields['title'] = imageName;
+    requestImgurApi.headers['Authorization'] = 'Client-ID ' + '1c5e1bfd98a4871';
+
+    // My Picked Or Captured Image
+    var imageFile = await http.MultipartFile.fromPath(
+      'image',
+      pickedImageXFileVar!.path,
+      filename: imageName,
+    );
+
+    requestImgurApi.files.add(imageFile);
+    var responseFromImgurApi = await requestImgurApi.send();
+    var result = await responseFromImgurApi.stream.bytesToString();
+
+    devtools.log(result);
+
+  }
+
+  //===========================================================
+  //        Upload Item Form Screen Methods Ends Here
   //===========================================================
 
   Widget defaultScreen() {
@@ -591,8 +629,10 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                               onTap: () {
                                 if (_formKey.currentState!.validate()) {
                                   devtools.log("form passed");
+                                  uploadItemImage();
                                 } else {
                                   devtools.log("form failed");
+                                  uploadItemImage();
                                 }
                               },
                               borderRadius: BorderRadius.circular(10),

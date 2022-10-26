@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:clothes_app/admin/admin_login.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:developer' as devtools show log;
 import 'package:http/http.dart' as http;
-
 
 class AdminUploadItemsScreen extends StatefulWidget {
   const AdminUploadItemsScreen({Key? key}) : super(key: key);
@@ -138,6 +138,16 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
 
     devtools.log(result);
 
+    var decodedRespnseofImgur = jsonDecode(result) as Map<String, dynamic>;
+    if (decodedRespnseofImgur['success'] == true) {
+      // Assigning to Above Declared Variable
+      imageLink = decodedRespnseofImgur['data']['link'].toString();
+      String deleteHash =
+          decodedRespnseofImgur['data']['deletehash'].toString();
+
+      devtools.log(imageLink);
+      devtools.log(deleteHash);
+    }
   }
 
   //===========================================================

@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 class HomeFragmentScreen extends StatelessWidget {
   TextEditingController searchController = TextEditingController();
 
+  getTrendingClothItems() async {
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

@@ -7,9 +7,36 @@ class HomeFragmentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(
+            height: 16,
+          ),
           // Search Bar Widget
           showSearchBarWidget(),
+          // Trending or Popular Items
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            child: Text(
+              "Trending",
+              style: TextStyle(
+                  color: Colors.purpleAccent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24),
+            ),
+          ),
+
+          // All New Collection or Items
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            child: Text(
+              "New Collections",
+              style: TextStyle(
+                  color: Colors.purpleAccent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24),
+            ),
+          ),
         ],
       ),
     );
@@ -21,46 +48,43 @@ class HomeFragmentScreen extends StatelessWidget {
       child: TextField(
         controller: searchController,
         decoration: InputDecoration(
-          prefixIcon: IconButton(
-              onPressed: (){},
-              icon: const Icon(Icons.search, color: Colors.purple,)),
-          suffixIcon: IconButton(
-            onPressed: (){},
-            icon: const Icon(Icons.shopping_cart, color: Colors.purple,),
-          ),
-          hintText: "Search best Clothes Here",
-          hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(20),
+            prefixIcon: IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.search,
+                  color: Colors.purple,
+                )),
+            suffixIcon: IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.shopping_cart,
+                color: Colors.purple,
+              ),
             ),
-            borderSide:
-            BorderSide(
-                width: 2,
-                color: Colors.purpleAccent),
-          ),
-          enabledBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(20),
+            hintText: "Search best Clothes Here",
+            hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(20),
+              ),
+              borderSide: BorderSide(width: 2, color: Colors.purpleAccent),
             ),
-            borderSide:
-            BorderSide(
-                width: 2,
-                color: Colors.purple),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(20),
+            enabledBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(20),
+              ),
+              borderSide: BorderSide(width: 2, color: Colors.purple),
             ),
-            borderSide:
-            BorderSide(
-                width: 2,
-                color: Colors.purpleAccent),
-          ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          fillColor: Colors.black,
-            filled: true
-        ),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(20),
+              ),
+              borderSide: BorderSide(width: 2, color: Colors.purpleAccent),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            fillColor: Colors.black,
+            filled: true),
         style: const TextStyle(
           color: Colors.white,
         ),

@@ -12,7 +12,7 @@ class DashboardOfFragments extends StatelessWidget {
   CurrentUserState rememberCurrentUserObj = Get.put(CurrentUserState());
 
   List<Widget> fragmentScreens = [
-    const HomeFragmentScreen(),
+    HomeFragmentScreen(),
     const FavoriteFragmentScreen(),
     const OrderFragmentScreen(),
     ProfileFragmentScreen()

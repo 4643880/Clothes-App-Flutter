@@ -39,4 +39,6 @@ class API {
 
   // Popular Clothes
   static const getTrendingClothes = "$hostClothes/trending_clothes.php";
+  // All New Collection
+  static const getAllNewClothesCollection = "$hostClothes/all_new_clothes.php";
 }

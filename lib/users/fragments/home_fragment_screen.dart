@@ -1,10 +1,53 @@
+import 'dart:convert';
+import 'package:clothes_app/users/models/clothes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'package:clothes_app/api_connection/api_connection.dart';
+import 'dart:developer' as devtools show log;
 
-class HomeFragmentScreen extends StatelessWidget {
+class HomeFragmentScreen extends StatefulWidget {
+  @override
+  State<HomeFragmentScreen> createState() => _HomeFragmentScreenState();
+}
+
+class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
   TextEditingController searchController = TextEditingController();
 
-  getTrendingClothItems() async {
+  Future<List<Clothes>> getTrendingClothItems() async {
+    List<Clothes> trendingClothesItemsList = [];
+    try {
+      var url = API.getTrendingClothes;
 
+      devtools.log(url);
+
+      var response = await http.post(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBodyOfTrending = jsonDecode(jsonString);
+
+        if (decodedResponseBodyOfTrending["success"] == true) {
+          devtools.log(decodedResponseBodyOfTrending.toString());
+          (decodedResponseBodyOfTrending["clothItemsData"] as List)
+              .forEach((itemRecord) {
+            trendingClothesItemsList.add(Clothes.fromJson(itemRecord));
+          });
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "Error: Status is not 200.",
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Fluttertoast.showToast(
+        msg: e.toString(),
+      );
+    }
+
+    return trendingClothesItemsList;
   }
 
   @override
@@ -29,6 +72,7 @@ class HomeFragmentScreen extends StatelessWidget {
                   fontSize: 24),
             ),
           ),
+          trendingMostPopularItemsWidget(),
 
           // All New Collection or Items
           const Padding(
@@ -95,55 +139,163 @@ class HomeFragmentScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-// TextFormField(
-// controller: _emailController,
-// decoration: const InputDecoration(
-// prefixIcon: Icon(
-// Icons.email,
-// color: Colors.black,
-// ),
-// hintText: "Please Enter Email",
-// // labelText: "Please Enter Email",
-// border: OutlineInputBorder(
-// borderRadius: BorderRadius.all(
-// Radius.circular(20),
-// ),
-// borderSide:
-// BorderSide(color: Colors.white60),
-// ),
-// enabledBorder: OutlineInputBorder(
-// borderRadius: BorderRadius.all(
-// Radius.circular(20),
-// ),
-// borderSide:
-// BorderSide(color: Colors.white60),
-// ),
-// disabledBorder: OutlineInputBorder(
-// borderRadius: BorderRadius.all(
-// Radius.circular(20),
-// ),
-// borderSide:
-// BorderSide(color: Colors.white60),
-// ),
-// focusedBorder: OutlineInputBorder(
-// borderRadius: BorderRadius.all(
-// Radius.circular(20),
-// ),
-// borderSide:
-// BorderSide(color: Colors.white60),
-// ),
-// contentPadding: EdgeInsets.symmetric(
-// horizontal: 14, vertical: 6),
-// fillColor: Colors.white,
-// filled: true,
-// ),
-// validator: (value) {
-// var checkNull = value ?? "";
-// if (checkNull.isEmpty) {
-// return "Email Can't be Empty";
-// }
-// return null;
-// },
-// ),
+  Widget trendingMostPopularItemsWidget() {
+    return FutureBuilder(
+      future: getTrendingClothItems(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return const Center(child: CircularProgressIndicator());
+            case ConnectionState.done:
+              return SizedBox(
+                height: 260,
+                child: ListView.builder(
+                  itemCount: snapshot.data?.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    var itemsList = snapshot.data;
+                    return GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        width: 200,
+                        margin: EdgeInsets.fromLTRB(
+                          (index == 0) ? 16 : 8,
+                          10,
+                          (index == snapshot.data!.length - 1) ? 16 : 8,
+                          10,
+                        ),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.black,
+                            boxShadow: const [
+                              BoxShadow(
+                                  offset: Offset(0, 3),
+                                  blurRadius: 6,
+                                  color: Colors.grey)
+                            ]),
+                        child: Column(
+                          children: [
+                            // Item Image
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                              ),
+                              child: FadeInImage(
+                                height: 150,
+                                width: 200,
+                                fit: BoxFit.cover,
+                                placeholder:
+                                    const AssetImage("images/place_holder.png"),
+                                image:
+                                    NetworkImage(itemsList![index].item_image!),
+                                imageErrorBuilder:
+                                    (context, error, stackTrace) {
+                                  return const Center(
+                                    child: Icon(Icons.broken_image_outlined),
+                                  );
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Name and Price
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          itemsList[index].item_name ?? "",
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        itemsList[index]
+                                                .item_price
+                                                .toString() ??
+                                            "",
+                                        style: const TextStyle(
+                                            color: Colors.purpleAccent,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  // Rating Stars
+                                  Row(
+                                    children: [
+                                      RatingBar.builder(
+                                        initialRating:
+                                            itemsList[index].item_rating!,
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemBuilder: (context, index) {
+                                          return const Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                          );
+                                        },
+                                        onRatingUpdate: (value) {},
+                                        ignoreGestures: true,
+                                        itemSize: 20,
+                                        unratedColor: Colors.grey,
+                                      ),
+                                      const SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text(
+                                        "( " +
+                                            itemsList[index]
+                                                .item_rating
+                                                .toString() +
+                                            " )",
+                                        style: const TextStyle(
+                                            color: Colors.purpleAccent,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                            Text(itemsList[index].item_name ?? ""),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            default:
+              return const Center(child: CircularProgressIndicator());
+          }
+        } else {
+          return const Center(
+            child: Text(
+              "No Trending Items Found",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          );
+        }
+      },
+    );
+  }
+}

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:clothes_app/users/item/item_details_screen.dart';
 import 'package:clothes_app/users/models/clothes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -194,9 +195,12 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                   itemCount: snapshot.data?.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
+                    Clothes eachClothItem = snapshot.data![index];
                     var itemsList = snapshot.data;
                     return GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Get.to(ItemDetailsScreen(itemInfo: eachClothItem));
+                      },
                       child: Container(
                         width: 200,
                         margin: EdgeInsets.fromLTRB(
@@ -261,10 +265,8 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                         width: 10,
                                       ),
                                       Text(
-                                        "\$ " +
-                                                itemsList[index]
-                                                    .item_price
-                                                    .toString() ??
+                                        "\$ ${itemsList[index]
+                                                    .item_price}" ??
                                             "",
                                         style: const TextStyle(
                                             color: Colors.purpleAccent,
@@ -301,11 +303,8 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                         width: 8,
                                       ),
                                       Text(
-                                        "( " +
-                                            itemsList[index]
-                                                .item_rating
-                                                .toString() +
-                                            " )",
+                                        "( ${itemsList[index]
+                                                .item_rating} )",
                                         style: const TextStyle(
                                             color: Colors.purpleAccent,
                                             fontSize: 18,
@@ -356,7 +355,9 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                 itemBuilder: (BuildContext context, int index) {
                   Clothes eachClothItem = snapshot.data![index];
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(ItemDetailsScreen(itemInfo: eachClothItem));
+                    },
                     child: Container(
                       margin: EdgeInsets.fromLTRB(
                         16,
@@ -407,9 +408,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                           left: 12,
                                         ),
                                         child: Text(
-                                          "\$ " +
-                                                  eachClothItem.item_price
-                                                      .toString() ??
+                                          "\$ ${eachClothItem.item_price}" ??
                                               "",
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
@@ -427,12 +426,11 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                   ),
                                   // Tags
                                   Text(
-                                    " Tags:\n" +
-                                        eachClothItem.item_tags
+                                    "Tags:\n${eachClothItem.item_tags
                                             .toString()
-                                            .replaceAll('[', ' ')
-                                            .replaceAll(']', ' ')
-                                            .toUpperCase(),
+                                            .replaceAll('[', '')
+                                            .replaceAll(']', '')
+                                            .toUpperCase()}",
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(

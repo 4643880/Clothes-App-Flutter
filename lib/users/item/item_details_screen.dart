@@ -106,6 +106,10 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
             const SizedBox(
               height: 10,
             ),
+            // Rating Bar with Rating Number
+            // Tags
+            // Price
+            // Quantity Item Controller
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -181,8 +185,9 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 ),
                 // Quantity Item Controller
                 Obx(
-                      () => Column(
+                  () => Column(
                     children: [
+                      // Increment Button
                       IconButton(
                         onPressed: () {
                           itemDetailsController.setQuantityItem(
@@ -194,6 +199,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           color: Colors.white,
                         ),
                       ),
+                      //Text of Counter
                       Text(
                         itemDetailsController.quantity.toString(),
                         style: const TextStyle(
@@ -202,17 +208,18 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           fontSize: 20,
                         ),
                       ),
+                      // Decrement Button
                       IconButton(
                         onPressed: () {
                           // Value should not be less than 1
-                          if(itemDetailsController.quantity -1 >= 1){
+                          if (itemDetailsController.quantity - 1 >= 1) {
                             itemDetailsController.setQuantityItem(
                               itemDetailsController.quantity - 1,
                             );
-                          }else{
-                            Fluttertoast.showToast(msg: "Quantity must be greater than 1");
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "Quantity must be greater than 1");
                           }
-
                         },
                         icon: const Icon(
                           Icons.remove_circle_outline,
@@ -224,9 +231,66 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 ),
               ],
             ),
-
+            const SizedBox(
+              height: 15,
+            ),
             // Size
-
+            const Text(
+              "Size: ",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.purpleAccent,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Wrap(
+              direction: Axis.horizontal,
+              spacing: 8,
+              runSpacing: 8,
+              children: List.generate(
+                widget.itemInfo.item_sizes!.length,
+                (index) => Obx(
+                  () => GestureDetector(
+                    onTap: () {
+                      itemDetailsController.setSizeItem(index);
+                    },
+                    child: Container(
+                      height: 35,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 2,
+                          color: itemDetailsController.size == index
+                              ? Colors.white
+                              : Colors.grey,
+                        ),
+                        color: itemDetailsController.size == index
+                            ? Colors.purpleAccent.withOpacity(
+                                0.2,
+                              )
+                            : Colors.white,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        widget.itemInfo.item_sizes![index].toUpperCase()
+                            .replaceAll("[", "")
+                            .replaceAll("]", ""),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: itemDetailsController.size == index
+                              ? Colors.white
+                              : Colors.purpleAccent
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -9,8 +9,10 @@ class ProfileFragmentScreen extends StatelessWidget {
   CurrentUserState currentUserState = Get.put(CurrentUserState());
   // Init State of Dashboard Page fetching data from sharedPrefs and assigning to sate, then using that data in this page
 
-  Widget userInfoItemProfile(
-      {required IconData iconData, required String userData}) {
+  Widget userInfoItemProfile({
+    required IconData iconData,
+    required String userData,
+  }) {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12), color: Colors.grey),

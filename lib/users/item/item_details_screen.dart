@@ -1,6 +1,9 @@
+import 'package:clothes_app/users/controllers/item_details_controller.dart';
 import 'package:clothes_app/users/models/clothes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 
 class ItemDetailsScreen extends StatefulWidget {
   final Clothes itemInfo;
@@ -11,11 +14,14 @@ class ItemDetailsScreen extends StatefulWidget {
 }
 
 class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
-  @override
+  // Dependency Injection
+  final itemDetailsController = Get.put(ItemDetailsController());
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
+        // fit: StackFit.expand,
         children: [
           // Item Image
           FadeInImage(
@@ -54,7 +60,10 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
         ),
         boxShadow: [
           BoxShadow(
-              offset: Offset(0, -3), blurRadius: 6, color: Colors.purpleAccent),
+            offset: Offset(0, -3),
+            blurRadius: 6,
+            color: Colors.purpleAccent,
+          ),
         ],
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -145,11 +154,8 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       ),
 
                       // Tags
-                      Text("Tags\n${widget.itemInfo.item_tags
-                            .toString()
-                            .replaceAll('[', "")
-                            .replaceAll("]", "")
-                            .toUpperCase()}",
+                      Text(
+                        "Tags\n${widget.itemInfo.item_tags.toString().replaceAll('[', "").replaceAll("]", "").toUpperCase()}",
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 16,
@@ -163,24 +169,64 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       ),
 
                       // Price
-                      Text(widget.itemInfo.item_price
-                          .toString()
-                          ,
+                      Text(
+                        "\$${widget.itemInfo.item_price}",
                         style: const TextStyle(
-                          color: Colors.purpleAccent,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold
-                        ),
-
+                            color: Colors.purpleAccent,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                 ),
-                // Item Counter
+                // Quantity Item Controller
+                Obx(
+                      () => Column(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          itemDetailsController.setQuantityItem(
+                            itemDetailsController.quantity + 1,
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.add_circle_outline,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        itemDetailsController.quantity.toString(),
+                        style: const TextStyle(
+                          color: Colors.purpleAccent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          // Value should not be less than 1
+                          if(itemDetailsController.quantity -1 >= 1){
+                            itemDetailsController.setQuantityItem(
+                              itemDetailsController.quantity - 1,
+                            );
+                          }else{
+                            Fluttertoast.showToast(msg: "Quantity must be greater than 1");
+                          }
+
+                        },
+                        icon: const Icon(
+                          Icons.remove_circle_outline,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
 
             // Size
+
           ],
         ),
       ),

@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController = TextEditingController();
 
   loginUserNow() async {
-    try{
+    try {
       var url = API.login;
       var response = await http.post(Uri.parse(url), body: {
         'user_email': _emailController.text.trim(),
@@ -37,11 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         var jsonString = response.body;
         var decodedResponseBodyForLogin =
-        convert.jsonDecode(jsonString) as Map<String, dynamic>;
+            convert.jsonDecode(jsonString) as Map<String, dynamic>;
         devtools.log(decodedResponseBodyForLogin.toString());
         if (decodedResponseBodyForLogin['success'] == true) {
           var decodedData =
-          decodedResponseBodyForLogin['userData'] as Map<String, dynamic>;
+              decodedResponseBodyForLogin['userData'] as Map<String, dynamic>;
 
           User userInfo = User.fromJson(decodedData);
 
@@ -51,33 +51,29 @@ class _LoginScreenState extends State<LoginScreen> {
           // Navigating User to Dashboard
           Get.to(DashboardOfFragments());
 
-
           Fluttertoast.showToast(
             msg: "Logged in Successfully.",
           );
           setState(() {
-            [_emailController, _passwordController]
-                .forEach((element) {
+            [_emailController, _passwordController].forEach((element) {
               element.clear();
             });
           });
         } else {
           Fluttertoast.showToast(
             msg:
-            "Incorrect Credentials, \n Please Enter Correct Login Credentials.",
+                "Incorrect Credentials, \n Please Enter Correct Login Credentials.",
           );
         }
-      }else {
+      } else {
         Fluttertoast.showToast(
-          msg:
-          "Status is not 200.",
+          msg: "Status is not 200.",
         );
       }
-    }catch (e){
+    } catch (e) {
       print(e.toString());
       Fluttertoast.showToast(
-        msg:
-        e.toString(),
+        msg: e.toString(),
       );
     }
   }
@@ -89,8 +85,10 @@ class _LoginScreenState extends State<LoginScreen> {
       body: LayoutBuilder(
         builder: (p0, p1) {
           return ConstrainedBox(
-            constraints:
-                BoxConstraints(minHeight: p1.maxHeight, minWidth: p1.maxWidth),
+            constraints: BoxConstraints(
+              minHeight: p1.maxHeight,
+              minWidth: p1.maxWidth,
+            ),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),

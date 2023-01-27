@@ -87,10 +87,9 @@ class _SignupScreenState extends State<SignupScreen> {
             msg: "Something went wrong. Please try again later.",
           );
         }
-      }else {
+      } else {
         Fluttertoast.showToast(
-          msg:
-          "Status is not 200.",
+          msg: "Status is not 200.",
         );
       }
     } catch (e) {
@@ -108,8 +107,10 @@ class _SignupScreenState extends State<SignupScreen> {
       body: LayoutBuilder(
         builder: (p0, p1) {
           return ConstrainedBox(
-            constraints:
-                BoxConstraints(minHeight: p1.maxHeight, minWidth: p1.maxWidth),
+            constraints: BoxConstraints(
+              minHeight: p1.maxHeight,
+              minWidth: p1.maxWidth,
+            ),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),

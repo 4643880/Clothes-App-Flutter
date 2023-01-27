@@ -232,9 +232,9 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
               ],
             ),
             const SizedBox(
-              height: 15,
+              height: 5,
             ),
-            // Size
+            // Size Heading
             const Text(
               "Size: ",
               style: TextStyle(
@@ -246,6 +246,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
             const SizedBox(
               height: 10,
             ),
+            // Different Sizes
             Wrap(
               direction: Axis.horizontal,
               spacing: 8,
@@ -275,21 +276,129 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        widget.itemInfo.item_sizes![index].toUpperCase()
+                        widget.itemInfo.item_sizes![index]
+                            .toUpperCase()
                             .replaceAll("[", "")
                             .replaceAll("]", ""),
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: itemDetailsController.size == index
-                              ? Colors.white
-                              : Colors.purpleAccent
-                        ),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: itemDetailsController.size == index
+                                ? Colors.white
+                                : Colors.purpleAccent),
                       ),
                     ),
                   ),
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            // Colors Heading
+            const Text(
+              "Color: ",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.purpleAccent,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            // Different Colors
+            Wrap(
+              direction: Axis.horizontal,
+              spacing: 8,
+              runSpacing: 8,
+              children: List.generate(
+                widget.itemInfo.item_colors!.length,
+                (index) => Obx(
+                  () => GestureDetector(
+                    onTap: () {
+                      itemDetailsController.setColorItem(index);
+                    },
+                    child: Container(
+                      height: 35,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 2,
+                          color: itemDetailsController.color == index
+                              ? Colors.white
+                              : Colors.grey,
+                        ),
+                        color: itemDetailsController.color == index
+                            ? Colors.purpleAccent.withOpacity(
+                                0.2,
+                              )
+                            : Colors.white,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        widget.itemInfo.item_colors![index]
+                            .toUpperCase()
+                            .replaceAll("[", "")
+                            .replaceAll("]", ""),
+                        style: TextStyle(
+                            overflow: TextOverflow.ellipsis,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: itemDetailsController.color == index
+                                ? Colors.white
+                                : Colors.purpleAccent),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            // Description Heading
+            const Text(
+              "Description: ",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.purpleAccent,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            // Description of Product
+            Text(
+              widget.itemInfo.item_desc!,
+              style: const TextStyle(
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.justify,
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            // Add to Cart Button
+            Material(
+              elevation: 4,
+              color: Colors.purpleAccent,
+              borderRadius: BorderRadius.circular(10),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10),
+                onTap: () {},
+                child: Container(
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: const Text("Add to Cart", style: TextStyle(
+                    color: Colors.white,fontWeight: FontWeight.bold,
+                  ),),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 30,
             ),
           ],
         ),

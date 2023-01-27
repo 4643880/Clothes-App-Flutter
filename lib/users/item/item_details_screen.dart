@@ -1,9 +1,14 @@
+import 'dart:convert';
+import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/controllers/item_details_controller.dart';
 import 'package:clothes_app/users/models/clothes.dart';
+import 'package:clothes_app/users/userPreferences/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import "dart:developer" as devtools show log;
 
 class ItemDetailsScreen extends StatefulWidget {
   final Clothes itemInfo;
@@ -16,6 +21,7 @@ class ItemDetailsScreen extends StatefulWidget {
 class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   // Dependency Injection
   final itemDetailsController = Get.put(ItemDetailsController());
+  final currentLoggedInUser = Get.put(CurrentUserState());
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -387,13 +393,19 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
               borderRadius: BorderRadius.circular(10),
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
-                onTap: () {},
+                onTap: () {
+                  addItemsToCart();
+                },
                 child: Container(
                   height: 50,
                   alignment: Alignment.center,
-                  child: const Text("Add to Cart", style: TextStyle(
-                    color: Colors.white,fontWeight: FontWeight.bold,
-                  ),),
+                  child: const Text(
+                    "Add to Cart",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -404,5 +416,53 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
         ),
       ),
     );
+  }
+
+  addItemsToCart() async {
+    try {
+      var url = API.addToCart;
+      var response = await http.post(
+        Uri.parse(url),
+        body: {
+          "user_id": currentLoggedInUser.user?.user_id.toString(),
+          "item_id": widget.itemInfo.item_id.toString(),
+          "quantity": itemDetailsController.quantity.toString(),
+          "color": widget.itemInfo.item_colors![itemDetailsController.color]
+              .toString()
+              .replaceAll("[", "")
+              .replaceAll("]", ""),
+          "size": widget.itemInfo.item_sizes![itemDetailsController.size]
+              .toString()
+              .replaceAll("[", "")
+              .replaceAll("]", ""),
+        },
+      );
+
+      // Successful Connection
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBodyForAddCart =
+            jsonDecode(jsonString) as Map<String, dynamic>;
+        devtools.log(decodedResponseBodyForAddCart.toString());
+        if (decodedResponseBodyForAddCart['success'] == true) {
+          Fluttertoast.showToast(
+            msg: "Item Saved to Cart Successfully.",
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: "Something Went Wrong, \n Please try again later.",
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "Status is not 200.",
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Fluttertoast.showToast(
+        msg: e.toString(),
+      );
+    }
   }
 }

@@ -172,13 +172,11 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
       });
       devtools.log(response.body);
       if (response.statusCode == 200) {
-        devtools.log("Here 1");
         var jsonString = response.body;
         var decodedResponseBodyForSignup =
             jsonDecode(jsonString) as Map<String, dynamic>;
-        devtools.log("Here 2 " + decodedResponseBodyForSignup.toString());
+        devtools.log(decodedResponseBodyForSignup.toString());
         if (decodedResponseBodyForSignup['success'] == true) {
-          devtools.log("Here 3 ");
           setState(() {
             [
               nameController,
@@ -203,7 +201,6 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
 
           Get.to(const AdminUploadItemsScreen());
         } else {
-          devtools.log("Here 4 ");
           Fluttertoast.showToast(
             msg:
                 "Something went wrong.\nItem Not Uploaded. Please try again later.",

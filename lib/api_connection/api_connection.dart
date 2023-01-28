@@ -47,8 +47,12 @@ class API {
   //===========================================================
   //        For Cart
   //===========================================================
+
+  // Add in Cart
   static const addToCart = "$hostCart/add.php";
 
+  // Read from Cart
+  static const getCartList = "$hostCart/read.php";
 
 
 }

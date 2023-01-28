@@ -159,26 +159,26 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
     List<String> colorsList = colorsController.text.split(',');
     try {
       var url = API.uploadItems;
-      var response = await http.post(
-        Uri.parse(url),
-        body: {
-          'item_id': nameController.text.trim().toString(),
-          'item_name': nameController.text.trim().toString(),
-          'item_rating': ratingController.text.trim().toString(),
-          'item_tags': tagsList.toString(),
-          'item_price': priceController.text.trim().toString(),
-          'item_sizes': sizesList.toString(),
-          'item_colors': colorsList.toString(),
-          'item_desc': descriptionController.text.trim().toString(),
-          'item_image': imageLink,
-        },
-      );
+      var response = await http.post(Uri.parse(url), body: {
+        'item_id': nameController.text.trim().toString(),
+        'item_name': nameController.text.trim().toString().replaceAll("'", "\\"),
+        'item_rating': ratingController.text.trim().toString(),
+        'item_tags': tagsList.toString(),
+        'item_price': priceController.text.trim().toString(),
+        'item_sizes': sizesList.toString(),
+        'item_colors': colorsList.toString(),
+        'item_desc': descriptionController.text.trim().toString().replaceAll("'", "\\"),
+        'item_image': imageLink
+      });
+      devtools.log(response.body);
       if (response.statusCode == 200) {
+        devtools.log("Here 1");
         var jsonString = response.body;
         var decodedResponseBodyForSignup =
             jsonDecode(jsonString) as Map<String, dynamic>;
-        devtools.log(decodedResponseBodyForSignup.toString());
+        devtools.log("Here 2 " + decodedResponseBodyForSignup.toString());
         if (decodedResponseBodyForSignup['success'] == true) {
+          devtools.log("Here 3 ");
           setState(() {
             [
               nameController,
@@ -203,6 +203,7 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
 
           Get.to(const AdminUploadItemsScreen());
         } else {
+          devtools.log("Here 4 ");
           Fluttertoast.showToast(
             msg:
                 "Something went wrong.\nItem Not Uploaded. Please try again later.",

@@ -315,7 +315,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                 ],
                               ),
                             ),
-                            Text(itemsList[index].item_name ?? ""),
+                            // Text(itemsList[index].item_name ?? ""),
                           ],
                         ),
                       ),

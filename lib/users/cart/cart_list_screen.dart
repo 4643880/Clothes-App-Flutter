@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as devtools show log;
 
-
 class CartListScreen extends StatefulWidget {
   const CartListScreen({Key? key}) : super(key: key);
 
@@ -32,19 +31,18 @@ class _CartListScreenState extends State<CartListScreen> {
           "currentOnlineUserId": currentLoggedInUser.user?.user_id.toString()
         },
       );
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         var jsonString = response.body;
         var decodedResponseBody = jsonDecode(jsonString);
         if (decodedResponseBody["success"] == true) {
           devtools.log(decodedResponseBody.toString());
-          (decodedResponseBody["currentUserCartData"] as List).forEach((element) {
+          (decodedResponseBody["currentUserCartData"] as List)
+              .forEach((element) {
             cartListOfCurrentUser.add(Cart.fromJson(element));
           });
-
-        }else{
+        } else {
           Fluttertoast.showToast(
-            msg:
-            "Something went wrong.",
+            msg: "Something went wrong.",
           );
         }
 
@@ -57,6 +55,26 @@ class _CartListScreenState extends State<CartListScreen> {
       }
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
+    }
+    calculateTotalAmount();
+    devtools.log(cartListController.total.toString());
+  }
+
+  calculateTotalAmount() {
+    cartListController.setTotal(0);
+    if (cartListController.selectedItemsList.length > 0) {
+      cartListController.cartList.forEach((Cart itemInCart) {
+        if (cartListController.selectedItemsList.contains(itemInCart.item_id)) {
+          // multiplying price with quantity and then assigning to variable
+          double eachItemTotalAmount = (itemInCart.item_price!) *
+              (double.parse(itemInCart.quantity.toString()));
+          // passing each item's total amount to setter
+          // 0 + 5 = 5 // in the beginning cart total is zero
+          // 5 + 20 = 25 // forEach loop assigning amount again and again
+          // 25 + 75 = 100
+          cartListController.setTotal(cartListController.total + eachItemTotalAmount);
+        }
+      });
     }
   }
 

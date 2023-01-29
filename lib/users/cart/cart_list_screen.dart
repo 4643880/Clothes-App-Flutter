@@ -129,7 +129,48 @@ class _CartListScreenState extends State<CartListScreen> {
             builder: (controller) {
               if (cartListController.selectedItemsList.length > 0) {
                 return IconButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    var responseFromDialogBox = await Get.dialog(
+                      AlertDialog(
+                        backgroundColor: Colors.grey,
+                        title: const Text("Delete"),
+                        content: const Text("Are you sure to Delete selected items from your Cart List?"),
+                        actions: [
+                          TextButton(
+                            onPressed: ()
+                            {
+                              Get.back();
+                            },
+                            child: const Text(
+                              "No",
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: ()
+                            {
+                              Get.back(result: "yesDelete");
+                            },
+                            child: const Text(
+                              "Yes",
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+
+                      ),
+                    );
+                    if(responseFromDialogBox == "yesDelete"){
+                      // delete selected items now
+                      cartListController.selectedItemsList.forEach((eachelectedItemId) {
+
+                      });
+                    }
+                  },
                   icon: const Icon(
                     Icons.delete_sweep,
                     size: 26,

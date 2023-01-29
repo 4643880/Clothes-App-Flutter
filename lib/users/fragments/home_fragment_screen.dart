@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:clothes_app/users/cart/cart_list_screen.dart';
 import 'package:clothes_app/users/item/item_details_screen.dart';
 import 'package:clothes_app/users/models/clothes.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +144,9 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                   color: Colors.purple,
                 )),
             suffixIcon: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Get.to(CartListScreen());
+              },
               icon: const Icon(
                 Icons.shopping_cart,
                 color: Colors.purple,
@@ -204,6 +207,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                       child: Container(
                         width: 200,
                         margin: EdgeInsets.fromLTRB(
+                          // index 0 means if it is first item them from top margin will be 16 if it is 3rd, 4th or any other item then margin will be 8
                           (index == 0) ? 16 : 8,
                           10,
                           (index == snapshot.data!.length - 1) ? 16 : 8,
@@ -359,6 +363,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                       Get.to(ItemDetailsScreen(itemInfo: eachClothItem));
                     },
                     child: Container(
+                      // index 0 means if it is first item them from top margin will be 16 if it is 3rd, 4th or any other item then margin will be 8
                       margin: EdgeInsets.fromLTRB(
                         16,
                         index == 0 ? 16 : 8,

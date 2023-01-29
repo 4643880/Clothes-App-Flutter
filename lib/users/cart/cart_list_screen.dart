@@ -91,6 +91,58 @@ class _CartListScreenState extends State<CartListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: const Text("My Cart"),
+        actions: [
+          //to select all items
+          Obx(
+            () => IconButton(
+              onPressed: () {
+                // if isSelected true then will be false if false then will be true
+                cartListController.setIsSelectedAllItems();
+                // will remove all from the list
+                cartListController.setClearAllSelectedItems();
+
+                if (cartListController.isSelectedAllItems == true) {
+                  cartListController.cartList.forEach((eachItem) {
+                    cartListController.setAddSelected(eachItem.item_id!);
+                  });
+                }
+
+                calculateTotalAmount();
+              },
+              icon: Icon(
+                cartListController.isSelectedAllItems
+                    ? Icons.check_box
+                    : Icons.check_box_outline_blank,
+                color: cartListController.isSelectedAllItems
+                    ? Colors.white
+                    : Colors.grey,
+              ),
+            ),
+          ),
+
+          // to delete selected items
+          GetBuilder(
+            init: CartListController(),
+            builder: (controller) {
+              if (cartListController.selectedItemsList.length > 0) {
+                return IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.delete_sweep,
+                    size: 26,
+                    color: Colors.redAccent,
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+        ],
+      ),
       body: Obx(
         () => cartListController.cartList.length > 0
             ? ListView.builder(
@@ -120,10 +172,13 @@ class _CartListScreenState extends State<CartListScreen> {
                         builder: (controller) {
                           return IconButton(
                             onPressed: () {
-                              if(cartListController.selectedItemsList.contains(eachCartItem.item_id)){
-                                cartListController.setDeleteItem(eachCartItem.item_id!);
-                              }else{
-                                cartListController.setAddSelected(eachCartItem.item_id!);
+                              if (cartListController.selectedItemsList
+                                  .contains(eachCartItem.item_id)) {
+                                cartListController
+                                    .setDeleteItem(eachCartItem.item_id!);
+                              } else {
+                                cartListController
+                                    .setAddSelected(eachCartItem.item_id!);
                               }
                               calculateTotalAmount();
                             },
@@ -277,12 +332,13 @@ class _CartListScreenState extends State<CartListScreen> {
                                     height: 150,
                                     width: 150,
                                     fit: BoxFit.cover,
-                                    placeholder: const AssetImage("images/place_holder.png"),
+                                    placeholder: const AssetImage(
+                                        "images/place_holder.png"),
                                     image: NetworkImage(
                                       eachCartItem.item_image!,
                                     ),
-                                    imageErrorBuilder: (context, error, stackTraceError)
-                                    {
+                                    imageErrorBuilder:
+                                        (context, error, stackTraceError) {
                                       return const Center(
                                         child: Icon(
                                           Icons.broken_image_outlined,
@@ -309,8 +365,7 @@ class _CartListScreenState extends State<CartListScreen> {
       ),
       bottomNavigationBar: GetBuilder(
         init: CartListController(),
-        builder: (controller)
-        {
+        builder: (controller) {
           return Container(
             decoration: const BoxDecoration(
               color: Colors.black,
@@ -328,7 +383,6 @@ class _CartListScreenState extends State<CartListScreen> {
             ),
             child: Row(
               children: [
-
                 //total amount
                 const Text(
                   "Total Amount:",
@@ -339,16 +393,16 @@ class _CartListScreenState extends State<CartListScreen> {
                   ),
                 ),
                 const SizedBox(width: 4),
-                Obx(()=>
-                    Text(
-                      "\$ " + cartListController.total.toStringAsFixed(2),
-                      maxLines: 1,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                Obx(
+                  () => Text(
+                    "\$ " + cartListController.total.toStringAsFixed(2),
+                    maxLines: 1,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
+                  ),
                 ),
 
                 const Spacer(),
@@ -360,10 +414,7 @@ class _CartListScreenState extends State<CartListScreen> {
                       : Colors.white24,
                   borderRadius: BorderRadius.circular(30),
                   child: InkWell(
-                    onTap: ()
-                    {
-
-                    },
+                    onTap: () {},
                     child: const Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: 20,
@@ -379,7 +430,6 @@ class _CartListScreenState extends State<CartListScreen> {
                     ),
                   ),
                 ),
-
               ],
             ),
           );

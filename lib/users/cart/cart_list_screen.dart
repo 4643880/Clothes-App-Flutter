@@ -119,7 +119,14 @@ class _CartListScreenState extends State<CartListScreen> {
                         init: CartListController(),
                         builder: (controller) {
                           return IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              if(cartListController.selectedItemsList.contains(eachCartItem.item_id)){
+                                cartListController.setDeleteItem(eachCartItem.item_id!);
+                              }else{
+                                cartListController.setAddSelected(eachCartItem.item_id!);
+                              }
+                              calculateTotalAmount();
+                            },
                             icon: Icon(
                               cartListController.selectedItemsList
                                       .contains(eachCartItem.item_id)
@@ -299,6 +306,84 @@ class _CartListScreenState extends State<CartListScreen> {
                   style: TextStyle(color: Colors.white, fontSize: 25),
                 ),
               ),
+      ),
+      bottomNavigationBar: GetBuilder(
+        init: CartListController(),
+        builder: (controller)
+        {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.black,
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, -3),
+                  color: Colors.white24,
+                  blurRadius: 6,
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            child: Row(
+              children: [
+
+                //total amount
+                const Text(
+                  "Total Amount:",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white38,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Obx(()=>
+                    Text(
+                      "\$ " + cartListController.total.toStringAsFixed(2),
+                      maxLines: 1,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ),
+
+                const Spacer(),
+
+                //order now btn
+                Material(
+                  color: cartListController.selectedItemsList.length > 0
+                      ? Colors.purpleAccent
+                      : Colors.white24,
+                  borderRadius: BorderRadius.circular(30),
+                  child: InkWell(
+                    onTap: ()
+                    {
+
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
+                      child: Text(
+                        "Order Now",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+          );
+        },
       ),
     );
   }

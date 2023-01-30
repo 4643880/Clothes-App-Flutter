@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/controllers/cart_list_controller.dart';
+import 'package:clothes_app/users/controllers/item_details_controller.dart';
 import 'package:clothes_app/users/models/cart_model.dart';
 import 'package:clothes_app/users/models/clothes.dart';
 import 'package:clothes_app/users/userPreferences/current_user.dart';
@@ -65,7 +66,7 @@ class _CartListScreenState extends State<CartListScreen> {
     cartListController.setTotal(0);
     if (cartListController.selectedItemsList.length > 0) {
       cartListController.cartList.forEach((Cart itemInCart) {
-        if (cartListController.selectedItemsList.contains(itemInCart.item_id)) {
+        if (cartListController.selectedItemsList.contains(itemInCart.cart_id)) {
           // multiplying price with quantity and then assigning to variable
           double eachItemTotalAmount = (itemInCart.item_price!) *
               (double.parse(itemInCart.quantity.toString()));
@@ -87,6 +88,78 @@ class _CartListScreenState extends State<CartListScreen> {
     super.initState();
   }
 
+  updateCurrentUserCartItemQuantity(
+      {required int quantity, required int cartId}) async {
+    List<Cart> cartListOfCurrentUser = [];
+    try {
+      String url = API.updateSelectedItemsQuantityInCart;
+      var response = await http.post(
+        Uri.parse(url),
+        body: {"cart_id": cartId.toString(), "quantity": quantity.toString()},
+      );
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBody = jsonDecode(jsonString);
+        if (decodedResponseBody["success"] == true) {
+          devtools.log(decodedResponseBody.toString());
+          // Again will Reload Cart Api for reading Data
+          getCurrentUserCartList();
+          Fluttertoast.showToast(
+            msg: "Item Updated Successfully.",
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: "Something went wrong.",
+          );
+        }
+
+        // Storing in the State Management
+        cartListController.setCartList(cartListOfCurrentUser);
+      } else {
+        Fluttertoast.showToast(
+          msg: "Error: Status is not 200.",
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+    calculateTotalAmount();
+    devtools.log(cartListController.total.toString());
+  }
+
+  Future<void> deleteSelectedItemsFromCartList(int cartId) async {
+    try {
+      devtools.log(cartId.toString());
+      String url = API.deleteSelectedItemsFromCart;
+      var response = await http.post(
+        Uri.parse(url),
+        body: {"cart_id": cartId.toString()},
+      );
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBody = jsonDecode(jsonString);
+        if (decodedResponseBody["success"] == true) {
+          devtools.log(decodedResponseBody.toString());
+          // Again will Reload Cart Api for reading Data
+          getCurrentUserCartList();
+          Fluttertoast.showToast(
+            msg: "Item Deleted Successfully.",
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: "Something went wrong.",
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "Error: Status is not 200.",
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +179,7 @@ class _CartListScreenState extends State<CartListScreen> {
 
                 if (cartListController.isSelectedAllItems == true) {
                   cartListController.cartList.forEach((eachItem) {
-                    cartListController.setAddSelected(eachItem.item_id!);
+                    cartListController.setAddSelected(eachItem.cart_id!);
                   });
                 }
 
@@ -134,11 +207,11 @@ class _CartListScreenState extends State<CartListScreen> {
                       AlertDialog(
                         backgroundColor: Colors.grey,
                         title: const Text("Delete"),
-                        content: const Text("Are you sure to Delete selected items from your Cart List?"),
+                        content: const Text(
+                            "Are you sure to Delete selected items from your Cart List?"),
                         actions: [
                           TextButton(
-                            onPressed: ()
-                            {
+                            onPressed: () {
                               Get.back();
                             },
                             child: const Text(
@@ -149,8 +222,7 @@ class _CartListScreenState extends State<CartListScreen> {
                             ),
                           ),
                           TextButton(
-                            onPressed: ()
-                            {
+                            onPressed: () {
                               Get.back(result: "yesDelete");
                             },
                             child: const Text(
@@ -161,13 +233,19 @@ class _CartListScreenState extends State<CartListScreen> {
                             ),
                           ),
                         ],
-
                       ),
                     );
-                    if(responseFromDialogBox == "yesDelete"){
+                    if (responseFromDialogBox == "yesDelete") {
                       // delete selected items now
-                      cartListController.selectedItemsList.forEach((eachelectedItemId) {
-
+                      cartListController.selectedItemsList
+                          .forEach((eachSelectedItemsCartId) async {
+                        // deleting from database using api
+                        await deleteSelectedItemsFromCartList(
+                            eachSelectedItemsCartId);
+                        // Removing from state management's list
+                        cartListController.selectedItemsList
+                            .remove(eachSelectedItemsCartId);
+                        cartListController.update();
                       });
                     }
                   },
@@ -185,7 +263,7 @@ class _CartListScreenState extends State<CartListScreen> {
         ],
       ),
       body: Obx(
-        () => cartListController.cartList.length > 0
+        () => cartListController.cartList.isNotEmpty
             ? ListView.builder(
                 scrollDirection: Axis.vertical,
                 itemCount: cartListController.cartList.length,
@@ -214,18 +292,20 @@ class _CartListScreenState extends State<CartListScreen> {
                           return IconButton(
                             onPressed: () {
                               if (cartListController.selectedItemsList
-                                  .contains(eachCartItem.item_id)) {
+                                  .contains(eachCartItem.cart_id)) {
                                 cartListController
-                                    .setDeleteItem(eachCartItem.item_id!);
+                                    .setDeleteItem(eachCartItem.cart_id!);
                               } else {
                                 cartListController
-                                    .setAddSelected(eachCartItem.item_id!);
+                                    .setAddSelected(eachCartItem.cart_id!);
                               }
                               calculateTotalAmount();
+                              devtools.log(cartListController.selectedItemsList
+                                  .toString());
                             },
                             icon: Icon(
                               cartListController.selectedItemsList
-                                      .contains(eachCartItem.item_id)
+                                      .contains(eachCartItem.cart_id)
                                   ? Icons.check_box
                                   : Icons.check_box_outline_blank,
                               color: cartListController.isSelectedAllItems
@@ -323,7 +403,24 @@ class _CartListScreenState extends State<CartListScreen> {
                                           children: [
                                             //-
                                             IconButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                // Value should not be less than 1
+                                                if (eachCartItem.quantity! -
+                                                        1 >=
+                                                    1) {
+                                                  updateCurrentUserCartItemQuantity(
+                                                    cartId:
+                                                        eachCartItem.cart_id!,
+                                                    quantity:
+                                                        eachCartItem.quantity! -
+                                                            1,
+                                                  );
+                                                } else {
+                                                  Fluttertoast.showToast(
+                                                      msg:
+                                                          "Quantity must be greater than 1");
+                                                }
+                                              },
                                               icon: const Icon(
                                                 Icons.remove_circle_outline,
                                                 color: Colors.grey,
@@ -350,7 +447,14 @@ class _CartListScreenState extends State<CartListScreen> {
 
                                             //+
                                             IconButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                updateCurrentUserCartItemQuantity(
+                                                  cartId: eachCartItem.cart_id!,
+                                                  quantity:
+                                                      eachCartItem.quantity! +
+                                                          1,
+                                                );
+                                              },
                                               icon: const Icon(
                                                 Icons.add_circle_outline,
                                                 color: Colors.grey,

@@ -18,8 +18,8 @@ class CartListController extends GetxController{
     _cartList.value = list;
   }
 
-  setAddSelected(int selectedItemId){
-    _selectedItems.value.add(selectedItemId);
+  setAddSelected(int selectedItemCartId){
+    _selectedItems.value.add(selectedItemCartId);
     update();
   }
 

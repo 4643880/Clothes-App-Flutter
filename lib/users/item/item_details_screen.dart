@@ -24,6 +24,136 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   final itemDetailsController = Get.put(ItemDetailsController());
   final currentLoggedInUser = Get.put(CurrentUserState());
 
+  deleteItemFromFavoriteList() async {
+    try {
+      var url = API.deleteFromFavorite;
+      var response = await http.post(
+        Uri.parse(url),
+        body: {
+          "user_id": currentLoggedInUser.user?.user_id.toString(),
+          "item_id": widget.itemInfo.item_id.toString(),
+        },
+      );
+
+      // Successful Connection
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBodyForDeleteFavorite =
+        jsonDecode(jsonString) as Map<String, dynamic>;
+        devtools.log(decodedResponseBodyForDeleteFavorite.toString());
+        if (decodedResponseBodyForDeleteFavorite['success'] == true) {
+          Fluttertoast.showToast(
+            msg: "Item Deleted From Your Favorite List",
+          );
+          validateFavoriteList();
+        } else {
+          Fluttertoast.showToast(
+            msg: "Something Went Wrong",
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "Status is not 200.",
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Fluttertoast.showToast(
+        msg: e.toString(),
+      );
+    }
+  }
+
+  addItemToFavoriteList() async {
+    try {
+      var url = API.addFavorite;
+      var response = await http.post(
+        Uri.parse(url),
+        body: {
+          "user_id": currentLoggedInUser.user?.user_id.toString(),
+          "item_id": widget.itemInfo.item_id.toString(),
+        },
+      );
+
+      // Successful Connection
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBodyOfAddFavorite =
+        jsonDecode(jsonString) as Map<String, dynamic>;
+        devtools.log(decodedResponseBodyOfAddFavorite.toString());
+        if (decodedResponseBodyOfAddFavorite['success'] == true) {
+          Fluttertoast.showToast(
+            msg: "Item Saved to Your Favorite List",
+          );
+          validateFavoriteList();
+        } else {
+          Fluttertoast.showToast(
+            msg: "Item Not Saved to Favorite List",
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "Status is not 200.",
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Fluttertoast.showToast(
+        msg: e.toString(),
+      );
+    }
+  }
+
+  validateFavoriteList() async {
+    try {
+      var url = API.validateFavorite;
+      var response = await http.post(
+        Uri.parse(url),
+        body: {
+          "user_id": currentLoggedInUser.user?.user_id.toString(),
+          "item_id": widget.itemInfo.item_id.toString(),
+        },
+      );
+
+      // Successful Connection
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBodyForValidateFavorite =
+        jsonDecode(jsonString) as Map<String, dynamic>;
+        devtools.log(decodedResponseBodyForValidateFavorite.toString());
+        if (decodedResponseBodyForValidateFavorite['favoriteItemFound'] == true) {
+          Fluttertoast.showToast(
+            msg: "Item is in Favorite List.",
+          );
+
+          // Assigning to State Management
+          itemDetailsController.setIsFavoriteItem(true);
+        } else {
+          Fluttertoast.showToast(
+            msg: "Item is not in Favorite List.",
+          );
+          // Assigning to State Management
+          itemDetailsController.setIsFavoriteItem(false);
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "Status is not 200.",
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Fluttertoast.showToast(
+        msg: e.toString(),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    validateFavoriteList();
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -76,10 +206,10 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       onPressed: () {
                         if (itemDetailsController.isFavorite == true) {
                           //delete item from favorites
-                          // deleteItemFromFavoriteList();
+                          deleteItemFromFavoriteList();
                         } else {
                           //save item to user favorites
-                          // addItemToFavoriteList();
+                          addItemToFavoriteList();
                         }
                       },
                       icon: Icon(

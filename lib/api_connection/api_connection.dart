@@ -75,4 +75,7 @@ class API {
   // Validate Favorite
   static const validateFavorite = "$hostFavorite/validate_favorite.php";
 
+  // Read Favorite
+  static const readFavorite = "$hostFavorite/read.php";
+
 }

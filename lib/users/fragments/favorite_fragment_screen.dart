@@ -34,7 +34,7 @@ class FavoriteFragmentScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
 
             //displaying favoriteList
           ],

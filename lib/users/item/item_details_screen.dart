@@ -39,12 +39,13 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
       if (response.statusCode == 200) {
         var jsonString = response.body;
         var decodedResponseBodyForDeleteFavorite =
-        jsonDecode(jsonString) as Map<String, dynamic>;
+            jsonDecode(jsonString) as Map<String, dynamic>;
         devtools.log(decodedResponseBodyForDeleteFavorite.toString());
         if (decodedResponseBodyForDeleteFavorite['success'] == true) {
           Fluttertoast.showToast(
             msg: "Item Deleted From Your Favorite List",
           );
+          // Will validate and assign value to state management
           validateFavoriteList();
         } else {
           Fluttertoast.showToast(
@@ -71,7 +72,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
         Uri.parse(url),
         body: {
           "user_id": currentLoggedInUser.user?.user_id.toString(),
-          "item_id": widget.itemInfo.item_id.toString(),
+          "item_id": widget.itemInfo.item_id.toString()
         },
       );
 
@@ -79,12 +80,13 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
       if (response.statusCode == 200) {
         var jsonString = response.body;
         var decodedResponseBodyOfAddFavorite =
-        jsonDecode(jsonString) as Map<String, dynamic>;
+            jsonDecode(jsonString) as Map<String, dynamic>;
         devtools.log(decodedResponseBodyOfAddFavorite.toString());
         if (decodedResponseBodyOfAddFavorite['success'] == true) {
           Fluttertoast.showToast(
             msg: "Item Saved to Your Favorite List",
           );
+          // Will validate and assign value to state management
           validateFavoriteList();
         } else {
           Fluttertoast.showToast(
@@ -119,20 +121,14 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
       if (response.statusCode == 200) {
         var jsonString = response.body;
         var decodedResponseBodyForValidateFavorite =
-        jsonDecode(jsonString) as Map<String, dynamic>;
+            jsonDecode(jsonString) as Map<String, dynamic>;
         devtools.log(decodedResponseBodyForValidateFavorite.toString());
-        if (decodedResponseBodyForValidateFavorite['favoriteItemFound'] == true) {
-          Fluttertoast.showToast(
-            msg: "Item is in Favorite List.",
-          );
-
-          // Assigning to State Management
+        if (decodedResponseBodyForValidateFavorite['favoriteItemFound'] ==
+            true) {
+          // Assigning to State Management & calling validation method in init
           itemDetailsController.setIsFavoriteItem(true);
         } else {
-          Fluttertoast.showToast(
-            msg: "Item is not in Favorite List.",
-          );
-          // Assigning to State Management
+          // Assigning to State Management & calling validation method in init
           itemDetailsController.setIsFavoriteItem(false);
         }
       } else {
@@ -222,8 +218,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                   ),
                   //shopping cart icon
                   IconButton(
-                    onPressed: ()
-                    {
+                    onPressed: () {
                       Get.to(const CartListScreen());
                     },
                     icon: const Icon(

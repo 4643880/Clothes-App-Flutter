@@ -1,6 +1,6 @@
 class API {
   // Get IP from terminal ipconfig
-  static const hostConnect = "http://192.168.8.100/api_clothes_store/";
+  static const hostConnect = "http://192.168.240.180/api_clothes_store/";
   static const hostConnectUser = "$hostConnect/user/";
   static const hostConnectAdmin = "$hostConnect/admin/";
   static const hostUploadItems = "$hostConnect/items/";
@@ -73,6 +73,6 @@ class API {
   static const deleteFromFavorite = "$hostFavorite/delete.php";
 
   // Validate Favorite
-  static const validateFavorite = "$hostFavorite/validate_favorite";
+  static const validateFavorite = "$hostFavorite/validate_favorite.php";
 
 }

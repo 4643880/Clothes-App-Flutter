@@ -8,8 +8,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as devtools show log;
 
-
-
 class FavoriteFragmentScreen extends StatelessWidget {
   FavoriteFragmentScreen({Key? key}) : super(key: key);
   // Dependency Injection
@@ -21,9 +19,7 @@ class FavoriteFragmentScreen extends StatelessWidget {
       String url = API.readFavorite;
       var response = await http.post(
         Uri.parse(url),
-        body: {
-          "user_id": currentLoggedInUser.user?.user_id.toString()
-        },
+        body: {"user_id": currentLoggedInUser.user?.user_id.toString()},
       );
       if (response.statusCode == 200) {
         var jsonString = response.body;
@@ -36,7 +32,7 @@ class FavoriteFragmentScreen extends StatelessWidget {
           });
         } else {
           Fluttertoast.showToast(
-            msg: "Something went wrong.",
+            msg: "No Item Found in Favorite List.",
           );
         }
       } else {
@@ -48,9 +44,7 @@ class FavoriteFragmentScreen extends StatelessWidget {
       Fluttertoast.showToast(msg: e.toString());
     }
     return favoriteListOfCurrentUser;
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +53,8 @@ class FavoriteFragmentScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Padding(
+          children: [
+            const Padding(
               padding: EdgeInsets.fromLTRB(16, 24, 8, 8),
               child: Text(
                 "My Favorite List:",
@@ -71,7 +65,7 @@ class FavoriteFragmentScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.fromLTRB(16, 24, 8, 8),
               child: Text(
                 "Order these best clothes for yourself now.",
@@ -83,14 +77,171 @@ class FavoriteFragmentScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-            //displaying favoriteList
+            //displaying favorite List
+            favoriteListItemDesignWidget(),
           ],
         ),
       ),
     );
   }
 
+  favoriteListItemDesignWidget() {
+    return FutureBuilder(
+      future: getCurrentUserFavoriteList(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (snapshot.data!.isEmpty) {
+          devtools.log(snapshot.data.toString());
+          return const Center(
+            child: Text(
+              "No favorite item found",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          );
+        }
+        if (snapshot.data!.length > 0) {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            shrinkWrap: true,
+            // physics: const NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) {
+              Favorite eachFavoriteItemRecord = snapshot.data![index];
 
+              return GestureDetector(
+                onTap: () {},
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(
+                    16,
+                    index == 0 ? 16 : 8,
+                    16,
+                    index == snapshot.data!.length - 1 ? 16 : 8,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.black,
+                    boxShadow: const [
+                      BoxShadow(
+                        offset: Offset(0, 0),
+                        blurRadius: 6,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      //name + price
+                      //tags
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //name and price
+                              Row(
+                                children: [
+                                  //name
+                                  Expanded(
+                                    child: Text(
+                                      eachFavoriteItemRecord.item_name!,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+
+                                  //price
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 12, right: 12),
+                                    child: Text(
+                                      "\$ " +
+                                          eachFavoriteItemRecord.item_price
+                                              .toString(),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.purpleAccent,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(
+                                height: 16,
+                              ),
+
+                              //tags
+                              Text(
+                                "Tags: \n" +
+                                    eachFavoriteItemRecord.item_tags
+                                        .toString()
+                                        .replaceAll("[", "")
+                                        .replaceAll("]", ""),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //image clothes
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        ),
+                        child: FadeInImage(
+                          height: 130,
+                          width: 130,
+                          fit: BoxFit.cover,
+                          placeholder:
+                              const AssetImage("images/place_holder.png"),
+                          image: NetworkImage(
+                            eachFavoriteItemRecord.item_image!,
+                          ),
+                          imageErrorBuilder: (context, error, stackTraceError) {
+                            return const Center(
+                              child: Icon(
+                                Icons.broken_image_outlined,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        } else {
+          return const Center(
+            child: Text("Empty, No Data."),
+          );
+        }
+      },
+    );
+  }
 }

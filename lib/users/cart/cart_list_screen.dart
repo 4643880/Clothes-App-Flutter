@@ -44,7 +44,7 @@ class _CartListScreenState extends State<CartListScreen> {
           });
         } else {
           Fluttertoast.showToast(
-            msg: "Something went wrong.",
+            msg: "Cart List is Empty.",
           );
         }
 
@@ -147,7 +147,7 @@ class _CartListScreenState extends State<CartListScreen> {
           );
         } else {
           Fluttertoast.showToast(
-            msg: "Something went wrong.",
+            msg: "Your Cart List is Empty",
           );
         }
       } else {

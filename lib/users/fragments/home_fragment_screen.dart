@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:clothes_app/users/cart/cart_list_screen.dart';
 import 'package:clothes_app/users/item/item_details_screen.dart';
+import 'package:clothes_app/users/item/search_items.dart';
 import 'package:clothes_app/users/models/clothes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -138,7 +139,13 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
         controller: searchController,
         decoration: InputDecoration(
             prefixIcon: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(
+                    SearchItemsScreen(
+                      searchKeywords: searchController.text,
+                    ),
+                  );
+                },
                 icon: const Icon(
                   Icons.search,
                   color: Colors.purple,
@@ -269,8 +276,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                         width: 10,
                                       ),
                                       Text(
-                                        "\$ ${itemsList[index]
-                                                    .item_price}" ??
+                                        "\$ ${itemsList[index].item_price}" ??
                                             "",
                                         style: const TextStyle(
                                             color: Colors.purpleAccent,
@@ -307,8 +313,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                         width: 8,
                                       ),
                                       Text(
-                                        "( ${itemsList[index]
-                                                .item_rating} )",
+                                        "( ${itemsList[index].item_rating} )",
                                         style: const TextStyle(
                                             color: Colors.purpleAccent,
                                             fontSize: 18,
@@ -431,11 +436,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                   ),
                                   // Tags
                                   Text(
-                                    "Tags:\n${eachClothItem.item_tags
-                                            .toString()
-                                            .replaceAll('[', '')
-                                            .replaceAll(']', '')
-                                            .toUpperCase()}",
+                                    "Tags:\n${eachClothItem.item_tags.toString().replaceAll('[', '').replaceAll(']', '').toUpperCase()}",
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(

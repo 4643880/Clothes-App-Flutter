@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:clothes_app/api_connection/api_connection.dart';
+import 'package:clothes_app/users/item/item_details_screen.dart';
+import 'package:clothes_app/users/models/clothes.dart';
 import 'package:clothes_app/users/models/favorite_model.dart';
 import 'package:clothes_app/users/userPreferences/current_user.dart';
 import 'package:flutter/material.dart';
@@ -116,8 +118,24 @@ class FavoriteFragmentScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               Favorite eachFavoriteItemRecord = snapshot.data![index];
 
+              // Getting value from favorite model and assigning to cloth model because i want to navigate to ItemDetailsScreen that requires cloth object
+              Clothes cloth = Clothes(
+                  item_id: int.parse(eachFavoriteItemRecord.item_id.toString()),
+                  item_name: eachFavoriteItemRecord.item_name,
+                  item_rating: double.parse(eachFavoriteItemRecord.item_rating.toString()),
+                  item_tags: eachFavoriteItemRecord.item_tags.toString().split(', '),
+                  item_price: double.parse(eachFavoriteItemRecord.item_price.toString()),
+                  item_sizes: eachFavoriteItemRecord.item_sizes.toString().split(', '),
+                  item_colors: eachFavoriteItemRecord.item_colors.toString().split(', '),
+                  item_desc: eachFavoriteItemRecord.item_desc,
+                  item_image: eachFavoriteItemRecord.item_image
+              );
+
+
               return GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Get.to(ItemDetailsScreen(itemInfo: cloth,));
+                },
                 child: Container(
                   margin: EdgeInsets.fromLTRB(
                     16,

@@ -1,9 +1,9 @@
 class API {
   // Get IP from terminal ipconfig
-  static const hostConnect = "http://192.168.240.180/api_clothes_store/";
+  static const hostConnect = "http://192.168.114.180/api_clothes_store/";
   static const hostConnectUser = "$hostConnect/user/";
   static const hostConnectAdmin = "$hostConnect/admin/";
-  static const hostUploadItems = "$hostConnect/items/";
+  static const hostItems = "$hostConnect/items/";
   static const hostClothes = "$hostConnect/clothes/";
   static const hostCart = "$hostConnect/cart/";
   static const hostFavorite = "$hostConnect/favorite/";
@@ -33,7 +33,10 @@ class API {
   //===========================================================
 
   // Upload Items
-  static const uploadItems = "$hostUploadItems/upload.php";
+  static const uploadItems = "$hostItems/upload.php";
+
+  // Search Items
+  static const searchItems = "$hostItems/search.php";
 
   //===========================================================
   //        For Clothes
@@ -41,8 +44,10 @@ class API {
 
   // Popular Clothes
   static const getTrendingClothes = "$hostClothes/trending_clothes.php";
+
   // All New Collection
   static const getAllNewClothesCollection = "$hostClothes/all_new_clothes.php";
+
 
 
   //===========================================================

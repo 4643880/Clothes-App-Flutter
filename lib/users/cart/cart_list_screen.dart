@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/controllers/cart_list_controller.dart';
 import 'package:clothes_app/users/controllers/item_details_controller.dart';
+import 'package:clothes_app/users/item/item_details_screen.dart';
 import 'package:clothes_app/users/models/cart_model.dart';
 import 'package:clothes_app/users/models/clothes.dart';
 import 'package:clothes_app/users/userPreferences/current_user.dart';
@@ -269,20 +270,21 @@ class _CartListScreenState extends State<CartListScreen> {
                 itemCount: cartListController.cartList.length,
                 itemBuilder: (context, index) {
                   Cart eachCartItem = cartListController.cartList[index];
-                  // Clothes clothesModel = Clothes(
-                  //     item_id: int.parse(eachCartItem.item_id.toString()),
-                  //     item_name: eachCartItem.item_name,
-                  //     item_rating:
-                  //         double.parse(eachCartItem.item_rating.toString()),
-                  //     item_tags: eachCartItem.item_tags.toString().split(', '),
-                  //     item_price:
-                  //         double.parse(eachCartItem.item_price.toString()),
-                  //     item_sizes:
-                  //         eachCartItem.item_sizes.toString().split(', '),
-                  //     item_colors:
-                  //         eachCartItem.item_colors.toString().split(', '),
-                  //     item_desc: eachCartItem.item_desc,
-                  //     item_image: eachCartItem.item_image);
+                  // Getting value from cart model and assigning to cloth model because i want to navigate to ItemDetailsScreen that requires cloth object
+                  Clothes clothesModel = Clothes(
+                      item_id: int.parse(eachCartItem.item_id.toString()),
+                      item_name: eachCartItem.item_name,
+                      item_rating:
+                          double.parse(eachCartItem.item_rating.toString()),
+                      item_tags: eachCartItem.item_tags.toString().split(', '),
+                      item_price:
+                          double.parse(eachCartItem.item_price.toString()),
+                      item_sizes:
+                          eachCartItem.item_sizes.toString().split(', '),
+                      item_colors:
+                          eachCartItem.item_colors.toString().split(', '),
+                      item_desc: eachCartItem.item_desc,
+                      item_image: eachCartItem.item_image);
                   return Row(
                     children: [
                       // check Icon Button
@@ -317,7 +319,9 @@ class _CartListScreenState extends State<CartListScreen> {
                       ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Get.to(ItemDetailsScreen(itemInfo: clothesModel));
+                          },
                           child: Container(
                             margin: EdgeInsets.fromLTRB(
                                 // index 0 means if it is first item them from top margin will be 16 if it is 3rd, 4th or any other item then margin will be 8

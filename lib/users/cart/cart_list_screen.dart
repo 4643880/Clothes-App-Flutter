@@ -129,7 +129,7 @@ class _CartListScreenState extends State<CartListScreen> {
         var decodedResponseBody = jsonDecode(jsonString);
         if (decodedResponseBody["success"] == true) {
           devtools.log(decodedResponseBody.toString());
-          // Again will Reload Cart Api for reading Data
+          // Again will Reload Cart Api for reading Data and assign to state management controller
           getCurrentUserCartList();
           Fluttertoast.showToast(
             msg: "Item Updated Successfully.",
@@ -139,9 +139,6 @@ class _CartListScreenState extends State<CartListScreen> {
             msg: "Something went wrong.",
           );
         }
-
-        // Storing in the State Management
-        cartListController.setCartList(cartListOfCurrentUser);
       } else {
         Fluttertoast.showToast(
           msg: "Error: Status is not 200.",

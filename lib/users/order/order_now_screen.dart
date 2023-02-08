@@ -1,5 +1,7 @@
 import 'package:clothes_app/users/controllers/order_now_controller.dart';
+import 'package:clothes_app/users/order/order_confirmation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class OrderNowScreen extends StatelessWidget {
@@ -153,9 +155,7 @@ class OrderNowScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             child: TextField(
-              style: const TextStyle(
-                  color: Colors.white54
-              ),
+              style: const TextStyle(color: Colors.white54),
               controller: phoneNumberController,
               decoration: InputDecoration(
                 hintText: 'Any Contact Number..',
@@ -202,9 +202,7 @@ class OrderNowScreen extends StatelessWidget {
             child: TextField(
               maxLines: null,
               maxLength: 1000,
-              style: const TextStyle(
-                  color: Colors.white54
-              ),
+              style: const TextStyle(color: Colors.white54),
               controller: shipmentAddressController,
               decoration: InputDecoration(
                 hintText: 'Your Shipment Address..',
@@ -251,9 +249,7 @@ class OrderNowScreen extends StatelessWidget {
             child: TextField(
               maxLines: null,
               maxLength: 1000,
-              style: const TextStyle(
-                  color: Colors.white54
-              ),
+              style: const TextStyle(color: Colors.white54),
               controller: noteToSellerController,
               decoration: InputDecoration(
                 hintText: 'Any note you want to write to seller..',
@@ -290,9 +286,22 @@ class OrderNowScreen extends StatelessWidget {
               color: Colors.purpleAccent,
               borderRadius: BorderRadius.circular(30),
               child: InkWell(
-                onTap: ()
-                {
-
+                onTap: () {
+                  if (phoneNumberController.text.isNotEmpty &&
+                      shipmentAddressController.text.isNotEmpty) {
+                    Get.to(OrderConfirmationScreen(
+                      selectedCartIDs: selectedCartIDs,
+                      selectedCartListItemsInfo: selectedCartListItemsInfo,
+                      totalAmount: totalAmount,
+                      deliverySystem: orderNowController.deliverySystem,
+                      paymentSystem: orderNowController.paymentSystem,
+                      phoneNumber: phoneNumberController.text,
+                      shipmentAddress: shipmentAddressController.text,
+                      note: noteToSellerController.text,
+                    ));
+                  } else {
+                    Fluttertoast.showToast(msg: "Please fill the form.");
+                  }
                 },
                 borderRadius: BorderRadius.circular(30),
                 child: Padding(
@@ -302,7 +311,6 @@ class OrderNowScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-
                       Text(
                         "\$" + totalAmount!.toStringAsFixed(2),
                         style: const TextStyle(
@@ -311,9 +319,7 @@ class OrderNowScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
                       Spacer(),
-
                       const Text(
                         "Pay Amount Now",
                         style: TextStyle(
@@ -322,16 +328,12 @@ class OrderNowScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
                     ],
                   ),
                 ),
               ),
             ),
           ),
-
-
-
         ],
       ),
     );
@@ -399,7 +401,7 @@ class OrderNowScreen extends StatelessWidget {
                       //name
                       Text(
                         eachSelectedItem["item_name"],
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 18,

@@ -97,8 +97,9 @@ class _CartListScreenState extends State<CartListScreen> {
             "color": eachItemOfCartList.color,
             "size": eachItemOfCartList.size,
             "quantity": eachItemOfCartList.quantity,
-            "price":
-                eachItemOfCartList.item_price! * eachItemOfCartList.quantity!,
+            "price": eachItemOfCartList.item_price,
+            "totalAmount": eachItemOfCartList.item_price! *
+                double.parse(eachItemOfCartList.quantity.toString()),
           };
           selectedCartListItemsInfo.add(eachItemInformation);
         }

@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 class OrderNowController extends GetxController{
   // Initial Value
-  RxString _deliverySystem = "TCS".obs;
+  RxString _deliverySystem = "FedEx".obs;
   RxString _paymentSystem = "Apple Pay".obs;
 
 

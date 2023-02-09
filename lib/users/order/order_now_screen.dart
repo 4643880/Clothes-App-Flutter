@@ -334,6 +334,7 @@ class OrderNowScreen extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 30),
         ],
       ),
     );

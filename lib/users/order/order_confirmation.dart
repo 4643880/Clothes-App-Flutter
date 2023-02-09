@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:clothes_app/api_connection/api_connection.dart';
+import 'package:clothes_app/users/fragments/dashboard_of_fragments.dart';
 import 'package:clothes_app/users/models/order_model.dart';
 import 'package:clothes_app/users/userPreferences/current_user.dart';
 import 'package:flutter/material.dart';
@@ -97,12 +98,11 @@ class OrderConfirmationScreen extends StatelessWidget {
         var responseBodyOfAddNewOrder = jsonDecode(response.body);
 
         if (responseBodyOfAddNewOrder["success"] == true) {
-          Fluttertoast.showToast(
-            msg: "Your new order has been placed.",
-          );
-
           //delete selected items from user cart
-
+          selectedCartIDs?.forEach((eachCartId) async {
+            await deleteSelectedItemsFromCartList(eachCartId);
+          });
+          Get.to(DashboardOfFragments());
         } else {
           Fluttertoast.showToast(
             msg: "Error:: \nyour new order do NOT placed.",
@@ -114,121 +114,152 @@ class OrderConfirmationScreen extends StatelessWidget {
     }
   }
 
+  Future<void> deleteSelectedItemsFromCartList(int cartId) async {
+    try {
+      String url = API.deleteSelectedItemsFromCart;
+      var response = await http.post(
+        Uri.parse(url),
+        body: {"cart_id": cartId.toString()},
+      );
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBody = jsonDecode(jsonString);
+        if (decodedResponseBody["success"] == true) {
+          Fluttertoast.showToast(
+            msg: "Your new order has been placed.",
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: "Something Went Wrong",
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "Error: Status is not 200.",
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            //image
-            Image.asset(
-              "images/transaction.png",
-              width: 160,
-            ),
-            const SizedBox(
-              height: 4,
-            ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //image
+              Image.asset(
+                "images/transaction.png",
+                width: 160,
+              ),
+              const SizedBox(
+                height: 4,
+              ),
 
-            //title
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Please Attach Transaction \nProof Screenshot / Image",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              //title
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Please Attach Transaction \nProof Screenshot / Image",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 30),
+              const SizedBox(height: 30),
 
-            //select image btn
-            Material(
-              elevation: 8,
-              color: Colors.purpleAccent,
-              borderRadius: BorderRadius.circular(30),
-              child: InkWell(
-                onTap: () {
-                  chooseImageFromGallery();
-                },
+              //select image btn
+              Material(
+                elevation: 8,
+                color: Colors.purpleAccent,
                 borderRadius: BorderRadius.circular(30),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 12,
-                  ),
-                  child: Text(
-                    "Select Image",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
+                child: InkWell(
+                  onTap: () {
+                    chooseImageFromGallery();
+                  },
+                  borderRadius: BorderRadius.circular(30),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 12,
+                    ),
+                    child: Text(
+                      "Select Image",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            //display selected image by user
-            Obx(() => ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.7,
-                    maxHeight: MediaQuery.of(context).size.width * 0.6,
-                  ),
-                  child: imageSelectedByte.length > 0
-                      ? Image.memory(
-                          imageSelectedByte,
-                          fit: BoxFit.contain,
-                        )
-                      : const Placeholder(
-                          color: Colors.white60,
-                        ),
-                )),
+              //display selected image by user
+              Obx(() => ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.7,
+                      maxHeight: MediaQuery.of(context).size.width * 0.6,
+                    ),
+                    child: imageSelectedByte.length > 0
+                        ? Image.memory(
+                            imageSelectedByte,
+                            fit: BoxFit.contain,
+                          )
+                        : const Placeholder(
+                            color: Colors.white60,
+                          ),
+                  )),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            //confirm and proceed
-            Obx(() => Material(
-                  elevation: 8,
-                  color: imageSelectedByte.length > 0
-                      ? Colors.purpleAccent
-                      : Colors.grey,
-                  borderRadius: BorderRadius.circular(30),
-                  child: InkWell(
-                    onTap: () {
-                      if (imageSelectedByte.length > 0) {
-                        //save order info
-                        saveNewOrderInfo();
-                      } else {
-                        Fluttertoast.showToast(
-                          msg:
-                              "Please attach the transaction proof / screenshot.",
-                        );
-                      }
-                    },
+              //confirm and proceed
+              Obx(() => Material(
+                    elevation: 8,
+                    color: imageSelectedByte.length > 0
+                        ? Colors.purpleAccent
+                        : Colors.grey,
                     borderRadius: BorderRadius.circular(30),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 12,
-                      ),
-                      child: Text(
-                        "Confirmed & Proceed",
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
+                    child: InkWell(
+                      onTap: () {
+                        if (imageSelectedByte.length > 0) {
+                          //save order info
+                          saveNewOrderInfo();
+                        } else {
+                          Fluttertoast.showToast(
+                            msg:
+                                "Please attach the transaction proof / screenshot.",
+                          );
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(30),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 12,
+                        ),
+                        child: Text(
+                          "Confirmed & Proceed",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )),
-          ],
+                  )),
+            ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/models/order_model.dart';
+import 'package:clothes_app/users/order/order_details_screen.dart';
 import 'package:clothes_app/users/userPreferences/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -194,9 +195,9 @@ class OrderFragmentScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(18),
                   child: ListTile(
                     onTap: () {
-                      // Get.to(OrderDetailsScreen(
-                      //   clickedOrderInfo: eachOrderData,
-                      // ));
+                      Get.to(OrderDetailsScreen(
+                        clickedOrderInfo: eachOrderData,
+                      ));
                     },
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

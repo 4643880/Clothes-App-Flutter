@@ -14,7 +14,7 @@ class DashboardOfFragments extends StatelessWidget {
   List<Widget> fragmentScreens = [
     HomeFragmentScreen(),
     FavoriteFragmentScreen(),
-    const OrderFragmentScreen(),
+    OrderFragmentScreen(),
     ProfileFragmentScreen()
   ];
 

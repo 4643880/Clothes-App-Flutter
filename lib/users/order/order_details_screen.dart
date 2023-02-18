@@ -1,10 +1,11 @@
 import 'dart:convert';
-
 import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/models/order_model.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class OrderDetailsScreen extends StatefulWidget {
   final Order? clickedOrderInfo;
@@ -16,7 +17,7 @@ class OrderDetailsScreen extends StatefulWidget {
   final RxString _status = "new".obs;
   String get status => _status.value;
 
-  updateParcelStatus(String parcelReceived) {
+  updateParcelStatusForUI(String parcelReceived) {
     _status.value = parcelReceived;
   }
 
@@ -26,6 +27,86 @@ class OrderDetailsScreen extends StatefulWidget {
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   @override
+  showDialogForParcelConfirmation() async {
+    if (widget.clickedOrderInfo?.status == "new") {
+      var response = await Get.dialog(
+        AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text(
+            "Confirmation",
+            style: TextStyle(color: Colors.black),
+          ),
+          content: const Text(
+            "Haved you received your parcel?",
+            style: TextStyle(color: Colors.black),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text(
+                "No",
+                style: TextStyle(color: Colors.redAccent),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Get.back(result: "pressedYes");
+              },
+              child: const Text(
+                "Yes",
+                style: TextStyle(color: Colors.green),
+              ),
+            ),
+          ],
+        ),
+      );
+      if (response == "pressedYes") {
+        print("=========================");
+        updateStatusValueInDatabase();
+      }
+    }
+  }
+
+  updateStatusValueInDatabase() async {
+    try {
+      String url = API.updateOrderStatus;
+      var response = await http.post(
+        Uri.parse(url),
+        body: {"order_id": widget.clickedOrderInfo?.order_id.toString()},
+      );
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var decodedResponseBody = jsonDecode(jsonString);
+        if (decodedResponseBody["success"] == true) {
+          widget.updateParcelStatusForUI("received");
+          Fluttertoast.showToast(
+            msg: "Item Updated Successfully.",
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: "Something went wrong.",
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "Error: Status is not 200.",
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
+  @override
+  void initState() {
+    widget.updateParcelStatusForUI(
+      widget.clickedOrderInfo!.status.toString(),
+    );
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -41,7 +122,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             color: Colors.white30,
             borderRadius: BorderRadius.circular(10),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                if(widget.status == "new"){
+                  showDialogForParcelConfirmation();
+                }
+
+              },
               borderRadius: BorderRadius.circular(30),
               child: Padding(
                 padding:

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/models/order_model.dart';
-import 'package:clothes_app/users/order/history_screen.dart';
 import 'package:clothes_app/users/order/order_details_screen.dart';
 import 'package:clothes_app/users/userPreferences/current_user.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +11,15 @@ import 'dart:developer' as devtools show log;
 
 import 'package:intl/intl.dart';
 
-class OrderFragmentScreen extends StatelessWidget {
-  OrderFragmentScreen({Key? key}) : super(key: key);
+class HistoryScreen extends StatelessWidget {
+  HistoryScreen({Key? key}) : super(key: key);
 
   final currentOnlineUser = Get.put(CurrentUserState());
 
   Future<List<Order>> getCurrentUserOrdersList() async {
     List<Order> ordersListOfCurrentUser = [];
     try {
-      String url = API.getOrders;
+      String url = API.getOrdersHistory;
       var response = await http.post(
         Uri.parse(url),
         body: {"user_id": currentOnlineUser.user?.user_id.toString()},
@@ -55,77 +54,52 @@ class OrderFragmentScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           //Order image       //history image
           //myOrder title     //history title
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 8, 0),
+            padding: const EdgeInsets.fromLTRB(16, 34, 8, 0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //order icon image
                 // my orders
                 Column(
                   children: [
                     Image.asset(
-                      "images/orders_icon.png",
+                      "images/history_icon.png",
                       width: 140,
                     ),
+                    const SizedBox(height: 8,),
                     const Text(
-                      "My Orders",
+                      "My History",
                       style: TextStyle(
                         color: Colors.purpleAccent,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
-                ),
-
-                //history icon image
-                // history
-                GestureDetector(
-                  onTap: () {
-                    //send user to orders history screen
-                    Get.to(HistoryScreen());
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          "images/history_icon.png",
-                          width: 45,
+                    const SizedBox(height: 8,),
+                    //some info
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 30.0),
+                      child: Text(
+                        "Here are your successfully received orders.",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w400,
                         ),
-                        const Text(
-                          "History",
-                          style: TextStyle(
-                            color: Colors.purpleAccent,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
           ),
 
-          //some info
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30.0),
-            child: Text(
-              "Here are your successfully placed orders.",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
+
 
           //displaying the user orderList
           Expanded(

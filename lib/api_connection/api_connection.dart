@@ -98,6 +98,9 @@ class API {
   // Read Orders
   static const getOrders = "$hostOrder/read.php";
 
+  // Read Orders
+  static const getOrdersHistory = "$hostOrder/read_history.php";
+
   // Update Order Status
   static const updateOrderStatus = "$hostOrder/update.php";
 

@@ -1,6 +1,6 @@
 class API {
   // Get IP from terminal ipconfig
-  static const hostConnect = "http://192.168.8.100/api_clothes_store/";
+  static const hostConnect = "http://192.168.8.102/api_clothes_store/";
   static const hostConnectUser = "$hostConnect/user/";
   static const hostConnectAdmin = "$hostConnect/admin/";
   static const hostItems = "$hostConnect/items/";
@@ -29,6 +29,8 @@ class API {
 
   // Login Admin
   static const loginAdmin = "$hostConnectAdmin/login.php";
+  static const receivedOrdersAdmin = "$hostConnectAdmin/read_orders.php";
+
 
   //===========================================================
   //        For Items

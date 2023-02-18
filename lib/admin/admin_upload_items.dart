@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:clothes_app/admin/admin_get_all_orders.dart';
 import 'package:clothes_app/admin/admin_login.dart';
 import 'package:clothes_app/api_connection/api_connection.dart';
+import 'package:clothes_app/users/authentication/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -161,13 +163,15 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
       var url = API.uploadItems;
       var response = await http.post(Uri.parse(url), body: {
         'item_id': nameController.text.trim().toString(),
-        'item_name': nameController.text.trim().toString().replaceAll("'", "\\"),
+        'item_name':
+            nameController.text.trim().toString().replaceAll("'", "\\"),
         'item_rating': ratingController.text.trim().toString(),
         'item_tags': tagsList.toString(),
         'item_price': priceController.text.trim().toString(),
         'item_sizes': sizesList.toString(),
         'item_colors': colorsList.toString(),
-        'item_desc': descriptionController.text.trim().toString().replaceAll("'", "\\"),
+        'item_desc':
+            descriptionController.text.trim().toString().replaceAll("'", "\\"),
         'item_image': imageLink
       });
       devtools.log(response.body);
@@ -233,8 +237,24 @@ class _AdminUploadItemsScreenState extends State<AdminUploadItemsScreen> {
                 LinearGradient(colors: [Colors.black54, Colors.deepPurple]),
           ),
         ),
-        title: const Text("Welcome Admin"),
-        centerTitle: true,
+        actions: [
+          IconButton(onPressed: (){
+            Get.to(const LoginScreen());
+          }, icon: const Icon(Icons.logout,),),
+        ],
+        title: GestureDetector(
+          onTap: () {
+            Get.to(AdminAllOrdersScreen());
+          },
+          child: const Text(
+            "New Orders",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
       body: Container(
         decoration: const BoxDecoration(

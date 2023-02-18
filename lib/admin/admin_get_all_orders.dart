@@ -58,69 +58,43 @@ class AdminAllOrdersScreen extends StatelessWidget {
           //Order image       //history image
           //myOrder title     //history title
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 8, 0),
+            padding: const EdgeInsets.fromLTRB(32, 24, 8, 0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //order icon image
                 // my orders
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset(
                       "images/orders_icon.png",
                       width: 140,
                     ),
                     const Text(
-                      "My Orders",
+                      "All New Orders",
                       style: TextStyle(
                         color: Colors.purpleAccent,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    //some info
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 30.0),
+                      child: Text(
+                        "Here are your successfully placed orders.",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
 
-                //history icon image
-                // history
-                GestureDetector(
-                  onTap: () {
-                    //send user to orders history screen
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          "images/history_icon.png",
-                          width: 45,
-                        ),
-                        const Text(
-                          "History",
-                          style: TextStyle(
-                            color: Colors.purpleAccent,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ],
-            ),
-          ),
-
-          //some info
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30.0),
-            child: Text(
-              "Here are your successfully placed orders.",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.w400,
-              ),
             ),
           ),
 

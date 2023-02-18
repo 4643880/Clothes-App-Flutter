@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:clothes_app/api_connection/api_connection.dart';
 import 'package:clothes_app/users/models/order_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
@@ -11,6 +12,13 @@ class OrderDetailsScreen extends StatefulWidget {
   OrderDetailsScreen({
     this.clickedOrderInfo,
   });
+
+  final RxString _status = "new".obs;
+  String get status => _status.value;
+
+  updateParcelStatus(String parcelReceived) {
+    _status.value = parcelReceived;
+  }
 
   @override
   State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
@@ -28,6 +36,46 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               .format(widget.clickedOrderInfo!.dateTime!),
           style: const TextStyle(fontSize: 14),
         ),
+        actions: [
+          Material(
+            color: Colors.white30,
+            borderRadius: BorderRadius.circular(10),
+            child: InkWell(
+              onTap: () {},
+              borderRadius: BorderRadius.circular(30),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                child: Row(
+                  children: [
+                    const Text(
+                      "Received",
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    const SizedBox(
+                      height: 08,
+                      width: 08,
+                    ),
+                    Obx(
+                      () => widget.status == "new"
+                          ? const Icon(
+                              Icons.help,
+                              color: Colors.red,
+                            )
+                          : const Icon(
+                              Icons.check_box,
+                              color: Colors.green,
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
